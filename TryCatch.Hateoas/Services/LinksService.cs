@@ -8,218 +8,155 @@ namespace TryCatch.Hateoas.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.AspNetCore.Http;
     using TryCatch.Hateoas.Models;
 
     /// <summary>
-    /// Abstract class to implement LinksServices.
+    /// Links service. Allows getting the hypermedia links for items and collections.
     /// </summary>
-    public abstract class LinksService : ILinksService
+    public class LinksService : ILinksService
     {
-        /// <summary>
-        /// Gets or sets the API base url as Uri: https://servername:port/relative-path-to-api.
-        /// </summary>
-        protected Uri UrlCollectionBase { get; set; }
+        private readonly IPagingEngine pagingEngine;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly HttpRequest httpRequest;
+        private readonly IDictionary<string, string> currentQueryParams = new Dictionary<string, string>();
+        private readonly Uri urlCollectionBase;
 
-        /// <summary>
-        /// Gets or sets relation name for the links on pagination.
-        /// </summary>
-        protected string ListRelation { get; set; }
-
-        /// <summary>
-        /// Gets or sets action for the links on pagination.
-        /// </summary>
-        protected string ListAction { get; set; }
-
-        /// <summary>
-        /// Gets or sets the max number of link pages.
-        /// </summary>
-        protected int MaxLinks { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Identity key used on entity/summary links.
-        /// </summary>
-        protected string IdentityKey { get; set; }
-
-        /// <summary>
-        /// Gets the base links collection - as templated - to add to the entities DTO.
-        /// </summary>
-        protected ICollection<Link> BaseEntityLinks { get; } = new HashSet<Link>();
-
-        /// <summary>
-        /// Gets the base links collection - as templated - to add to the Summary DTO.
-        /// </summary>
-        protected ICollection<Link> BaseSummaryLinks { get; } = new HashSet<Link>();
-
-        /// <summary>
-        /// Gets the default links for pagination like "offset change control" or "search control".
-        /// </summary>
-        protected ICollection<Link> BaseListLinks { get; } = new HashSet<Link>();
-
-        /// <summary>
-        /// Gets the collection of default query params for list result links.
-        /// </summary>
-        protected IDictionary<string, string> DefaultQueryParams { get; } = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Gets the collection of current query params.
-        /// </summary>
-        protected IDictionary<string, string> CurrentQueryParams { get; } = new Dictionary<string, string>();
-
-        /// <inheritdoc/>
-        public IEnumerable<Link> GetEntityLinks<TEntity>(TEntity entity)
-            where TEntity : class
+        public LinksService(IPagingEngine pagingEngine, IHttpContextAccessor httpContextAccessor)
         {
-            if (entity is null)
+            this.pagingEngine = pagingEngine ?? throw new ArgumentNullException(nameof(pagingEngine));
+            this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            this.httpRequest = this.httpContextAccessor.HttpContext.Request ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+
+            if (!this.httpRequest.Host.HasValue)
             {
-                throw new ArgumentNullException(nameof(entity));
+                throw new ArgumentException($"Host can't be null or empty");
             }
 
-            var id = this.GetEntityId(entity);
-
-            return this.BaseEntityLinks
-                .Where(x => this.CanAddTheLinkByRel(x.Rel))
-                .Select(x => new Link()
-                {
-                    Action = x.Action,
-                    Rel = x.Rel,
-                    Href = x.Href.ReplaceQueryParam(this.IdentityKey, id),
-                });
+            var uriBuilder = this.httpRequest.Host.Port.HasValue
+                ? new UriBuilder(this.httpRequest.Scheme, this.httpRequest.Host.Host, this.httpRequest.Host.Port.Value)
+                : new UriBuilder(this.httpRequest.Scheme, this.httpRequest.Host.Host);
+            var relativeUri = this.httpRequest.Path.HasValue ? this.httpRequest.Path.Value : string.Empty;
+            this.urlCollectionBase = new Uri(uriBuilder.Uri, relativeUri);
+            var queryParams = this.httpRequest.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
+            this.currentQueryParams.AddRange(queryParams);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<Link> GetSummaryLinks<TEntity>(TEntity entity)
-            where TEntity : class
+        public IEnumerable<Link> GetEntityLinks(IEnumerable<LinkInfo> templates, string identity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+            ThrowIfNull(templates, nameof(templates), "Templates can't be null");
 
-            var id = this.GetEntityId(entity);
-
-            return this.BaseSummaryLinks
-                .Where(x => this.CanAddTheLinkByRel(x.Rel))
-                .Select(x => new Link()
-                {
-                    Action = x.Action,
-                    Rel = x.Rel,
-                    Href = x.Href.ReplaceQueryParam(this.IdentityKey, id),
-                });
+            return templates
+                .Select(x => LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(x.Action).WithRel(x.Relation).Create()
+                    .AddOrUpdateQueryParam(x.DefaultQueryParams).AddIdentity(identity));
         }
 
         /// <inheritdoc/>
-        public IEnumerable<Link> GetPageResultLinks(int offset = 1, int limit = 10, long total = 0)
+        public IEnumerable<Link> GetPageLinks(
+            int offset,
+            int limit,
+            long total,
+            IDictionary<string, string> defaultQueryParams = null,
+            IEnumerable<LinkInfo> templates = null,
+            int maxNumberOfPages = 5,
+            string pageRel = "list",
+            string pageAction = "GET")
         {
-            if (offset < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} cannot be less than 1");
-            }
-
-            if (limit < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(limit), $"{nameof(limit)} cannot be less than 1");
-            }
+            ThrowIfLessThan(1, offset, nameof(offset), $"{nameof(offset)} cannot be less than 1");
+            ThrowIfLessThan(1, limit, nameof(limit), $"{nameof(limit)} cannot be less than 1");
 
             if (total < offset)
             {
                 total = offset;
             }
 
-            var links = new List<Link>();
-            links.AddRange(this.GetPaginationLinks(offset, limit, total));
-            links.AddRange(this.GetDefaultPaginationLinks());
-            return links;
-        }
+            var maxLinks = maxNumberOfPages + 2;
+            var lastOffset = this.pagingEngine.GetLastOffset(limit, total);
+            var pageNumbers = this.pagingEngine.GetPages(offset, total, limit, maxLinks);
+            var queryParams = defaultQueryParams is null ? this.currentQueryParams : defaultQueryParams.MergeWith(this.currentQueryParams);
 
-        /// <inheritdoc/>
-        public IEnumerable<Link> GetListResultLinks(int offset = 1, int limit = 10, long total = 0)
-        {
-            if (offset < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)} cannot be less than 1");
-            }
-
-            if (limit < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(limit), $"{nameof(limit)} cannot be less than 1");
-            }
-
-            if (total < offset)
-            {
-                total = offset;
-            }
-
-            var args = this.CurrentQueryParams.FilterKeys(new[] { "offset", "limit" }).AsQueryString();
-
-            var links = new List<Link>();
-
-            var prevPage = offset - limit;
-
-            if (prevPage > 0)
-            {
-                links.Add(this.CreateLink(prevPage, limit, args, $"prev"));
-            }
-
-            var nextPage = offset + limit;
-
-            if (nextPage <= total)
-            {
-                links.Add(this.CreateLink(nextPage, limit, args, $"next"));
-            }
-
-            return links;
-        }
-
-        protected virtual IEnumerable<Link> GetDefaultPaginationLinks() =>
-            this.BaseListLinks
-                .Where(x => this.CanAddTheLinkByRel(x.Rel))
-                .Select(x => new Link()
-                {
-                    Action = x.Action,
-                    Rel = x.Rel,
-                    Href = x.Href
-                        .ReplaceQueryParams(this.CurrentQueryParams)
-                        .ReplaceDefaultQueryParams(this.DefaultQueryParams),
-                });
-
-        protected virtual List<Link> GetPaginationLinks(int offset = 1, int limit = 10, long total = 0)
-        {
-            var args = this.CurrentQueryParams.FilterKeys(new[] { "offset", "limit" }).AsQueryString();
-            var lastOffset = (total - limit >= 0)
-                ? ((total % limit == 0) ? ((total - 1) / limit) * limit : (total / limit) * limit) + 1
-                : offset;
+            var baseListLink = LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(pageAction).With(queryParams).Create();
+            var firstPage = baseListLink.CloneWithRel($"{pageRel}_first").AddOrUpdateQueryParam("offset", "1").AddOrUpdateQueryParam("limit", $"{limit}");
+            var lastPage = firstPage.CloneWithRel($"{pageRel}_last").AddOrUpdateQueryParam("offset", $"{lastOffset}");
+            var pages = pageNumbers.Select(x => firstPage.CloneWithRel($"page_{x.Index}").AddOrUpdateQueryParam("offset", $"{x.Offset}"));
 
             var links = new List<Link>
             {
-                this.CreateLink(1, limit, args, "first"),
-                this.CreateLink(lastOffset, limit, args, "last"),
+                firstPage,
+                lastPage,
             };
 
-            var maxLinks = this.MaxLinks + 2;
-
-            for (var offset1 = offset; offset1 < total; offset1 += limit)
+            if (pages.Any())
             {
-                links.Add(this.CreateLink(offset1, limit, args, $"page_{(offset1 / limit) + 1}"));
+                links.AddRange(pages);
+            }
 
-                if (links.Count >= maxLinks)
-                {
-                    break;
-                }
+            if (templates != null && templates.Any())
+            {
+                var commonLinks = templates
+                    .Select(x => LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(x.Action).WithRel(x.Relation).Create()
+                        .AddOrUpdateQueryParam(queryParams).AddOrUpdateQueryParam(x.DefaultQueryParams));
+
+                links.AddRange(commonLinks);
             }
 
             return links;
         }
 
-        protected virtual Link CreateLink(long offset, int limit, string args, string relSuffix) => new Link()
+        public IEnumerable<Link> GetNextPageLinks(
+            int offset,
+            int limit,
+            IDictionary<string, string> defaultQueryParams = null,
+            IEnumerable<LinkInfo> templates = null,
+            string pageRel = "list",
+            string pageAction = "GET")
         {
-            Href = $"{this.UrlCollectionBase}?offset={offset}&limit={limit}{args}",
-            Rel = $"{this.ListRelation}_{relSuffix}",
-            Action = this.ListAction,
-        };
+            ThrowIfLessThan(1, offset, nameof(offset), $"{nameof(offset)} cannot be less than 1");
+            ThrowIfLessThan(1, limit, nameof(limit), $"{nameof(limit)} cannot be less than 1");
 
-        protected abstract string GetEntityId<TEntity>(TEntity entity)
-            where TEntity : class;
+            var queryParams = defaultQueryParams is null ? this.currentQueryParams : defaultQueryParams.MergeWith(this.currentQueryParams);
 
-        protected abstract bool CanAddTheLinkByRel(string linkRelation);
+            var baseLink = LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(pageAction).With(queryParams).Create();
+
+            baseLink.AddOrUpdateQueryParam("limit", $"{limit}");
+
+            var prevOffset = this.pagingEngine.GetPrevOffset(offset, limit);
+
+            var prevPage = baseLink.CloneWithRel($"{pageRel}_prev").AddOrUpdateQueryParam("offset", $"{prevOffset}");
+            var nextPage = baseLink.CloneWithRel($"{pageRel}_next").AddOrUpdateQueryParam("offset", $"{offset + limit}");
+
+            var links = new List<Link>
+            {
+                prevPage,
+                nextPage,
+            };
+
+            if (templates != null && templates.Any())
+            {
+                var commonLinks = templates
+                    .Select(x => LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(x.Action).WithRel(x.Relation).Create()
+                        .AddOrUpdateQueryParam(queryParams).AddOrUpdateQueryParam(x.DefaultQueryParams));
+                links.AddRange(commonLinks);
+            }
+
+            return links;
+        }
+
+        private static void ThrowIfNull<TArgument>(TArgument argument, string name, string message = "")
+        {
+            if (argument is null)
+            {
+                throw new ArgumentNullException(name, message);
+            }
+        }
+
+        private static void ThrowIfLessThan(int threashold, int value, string name, string message)
+        {
+            if (value < threashold)
+            {
+                throw new ArgumentOutOfRangeException(name, message);
+            }
+        }
     }
 }

@@ -9,44 +9,56 @@ namespace TryCatch.Hateoas.Services
     using TryCatch.Hateoas.Models;
 
     /// <summary>
-    /// Links service interface. Allows to create Hateoas links for specific entity/DTO.
+    /// Links service interface. Allows creating hateoas links.
     /// </summary>
     public interface ILinksService
     {
         /// <summary>
-        /// Allows to get all links for an entity DTO reference, filtered by authorization rule.
+        /// Allows getting links for an entity.
         /// </summary>
-        /// <typeparam name="TEntity">Type of entity.</typeparam>
-        /// <param name="entity">A reference to the entity.</param>
-        /// <returns>A new links collection for the entity DTO.</returns>
-        IEnumerable<Link> GetEntityLinks<TEntity>(TEntity entity)
-            where TEntity : class;
+        /// <param name="templates">A <see cref="IEnumerable{LinkInfo}"/> templates collection.</param>
+        /// <param name="identity">The identity value of the current item.</param>
+        /// <returns>A <see cref="IEnumerable{Link}"/> reference to the created links collection.</returns>
+        IEnumerable<Link> GetEntityLinks(IEnumerable<LinkInfo> templates, string identity);
 
         /// <summary>
-        /// Allows to get all links for Summary DTO reference, filtered by authorization rule.
-        /// </summary>
-        /// <typeparam name="TEntity">Type of entity.</typeparam>
-        /// <param name="entity">A reference to the entity.</param>
-        /// <returns>A new links collection for the summary DTO.</returns>
-        IEnumerable<Link> GetSummaryLinks<TEntity>(TEntity entity)
-            where TEntity : class;
-
-        /// <summary>
-        /// Allows to get all links for pagination result DTO reference.
+        /// Allows getting all links for pagination results.
         /// </summary>
         /// <param name="offset">Current offest used in the query.</param>
         /// <param name="limit">Current limit used in the query.</param>
         /// <param name="total">Number of matched entities on the current query.</param>
-        /// <returns>A links collection for pagination result DTO.</returns>
-        IEnumerable<Link> GetPageResultLinks(int offset = 1, int limit = 10, long total = 0);
+        /// <param name="defaultQueryParams">A <see cref="IDictionary{string,string}"/> default query params collection. Default values is null.</param>
+        /// <param name="templates">A <see cref="IEnumerable{LinkInfo}"/> templates collection. Default values is null.</param>
+        /// <param name="maxNumberOfPages">Max number of links pages to be created. Default value is 5.</param>
+        /// <param name="pageRel">Name of the relation to be used on page links. Default value is "list".</param>
+        /// <param name="pageAction">Name of the action to be used on page links. Default value is "GET".</param>
+        /// <returns>A <see cref="IEnumerable{Link}"/> reference to the created links collection.</returns>
+        IEnumerable<Link> GetPageLinks(
+            int offset,
+            int limit,
+            long total,
+            IDictionary<string, string> defaultQueryParams = null,
+            IEnumerable<LinkInfo> templates = null,
+            int maxNumberOfPages = 5,
+            string pageRel = "list",
+            string pageAction = "GET");
 
         /// <summary>
-        /// Allows to get all links for list result DTO reference.
+        /// Allows getting all links for next page result.
         /// </summary>
         /// <param name="offset">Current offest used in the query.</param>
         /// <param name="limit">Current limit used in the query.</param>
-        /// <param name="total">Number of matched entities on the current query.</param>
-        /// <returns>A links collection for list result DTO.</returns>
-        IEnumerable<Link> GetListResultLinks(int offset = 1, int limit = 10, long total = 0);
+        /// <param name="defaultQueryParams">A <see cref="IDictionary{string,string}"/> default query params collection. Default values is null.</param>
+        /// <param name="templates">A <see cref="IEnumerable{LinkInfo}"/> templates collection. Default values is null.</param>
+        /// <param name="pageRel">Name of the relation to be used on page links. Default value is "list".</param>
+        /// <param name="pageAction">Name of the action to be used on page links. Default value is "GET".</param>
+        /// <returns>A <see cref="IEnumerable{Link}"/> reference to the created links collection.</returns>
+        IEnumerable<Link> GetNextPageLinks(
+            int offset,
+            int limit,
+            IDictionary<string, string> defaultQueryParams = null,
+            IEnumerable<LinkInfo> templates = null,
+            string pageRel = "list",
+            string pageAction = "GET");
     }
 }

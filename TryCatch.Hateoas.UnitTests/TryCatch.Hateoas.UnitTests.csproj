@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TryCatch.Hateoas\TryCatch.Hateoas.csproj" />
+    <ProjectReference Include="..\TryCatch.Hateoas\TryCatch.Hateoas.csproj" />    
   </ItemGroup>
 
   <ItemGroup>

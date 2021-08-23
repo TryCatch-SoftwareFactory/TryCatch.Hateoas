@@ -2,14 +2,15 @@
 // Copyright © TryCatch Software Factory All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 // </copyright>
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("TryCatch.Hateoas.UnitTests")]
 
 namespace System
 {
     using System.Collections.Generic;
 
-    public static class StringExtensions
+    internal static class StringExtensions
     {
-        public static string SetQueryParamAsLast(this string query, string queryParam)
+        internal static string SetQueryParamAsLast(this string query, string queryParam)
         {
             if (string.IsNullOrWhiteSpace(queryParam))
             {
@@ -27,7 +28,7 @@ namespace System
             return queryString.CleanUri();
         }
 
-        public static string ReplaceQueryParam(this string baseUri, string key, string value)
+        internal static string ReplaceQueryParam(this string baseUri, string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -44,7 +45,7 @@ namespace System
                 .CleanUri();
         }
 
-        public static string ReplaceQueryParams(this string baseUri, IDictionary<string, string> queryParams)
+        internal static string ReplaceQueryParams(this string baseUri, IDictionary<string, string> queryParams)
         {
             if (queryParams is null)
             {
@@ -64,7 +65,7 @@ namespace System
             return baseUri.CleanUri();
         }
 
-        public static string ReplaceDefaultQueryParams(this string baseUri, IDictionary<string, string> defaultQueryParams)
+        internal static string ReplaceDefaultQueryParams(this string baseUri, IDictionary<string, string> defaultQueryParams)
         {
             if (defaultQueryParams is null)
             {
@@ -91,7 +92,7 @@ namespace System
             return baseUri.CleanUri();
         }
 
-        private static string CleanUri(this string baseUri)
+        internal static string CleanUri(this string baseUri)
         {
             var substrings = new Dictionary<string, string>()
             {

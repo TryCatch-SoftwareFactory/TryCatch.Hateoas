@@ -305,5 +305,56 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
             // Asserts
             actual.Should().BeEquivalentTo(expected);
         }
+
+        [Fact]
+        public void MergeWith_with_invalid_arguments()
+        {
+            // Arrange
+            IDictionary<string, string> keysToMerge = null;
+            var sut = new Dictionary<string, string>()
+            {
+                { "key1", "value1" },
+                { "key2", "value2" },
+                { "key3", "value3" },
+            };
+
+            // Act
+            Action actual = () => sut.MergeWith(keysToMerge);
+
+            // Asserts
+            actual.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MergeWith_ok()
+        {
+            // Arrange
+            var keysToMerge = new Dictionary<string, string>()
+            {
+                { "key2", "value22" },
+                { "key3", "" },
+                { "key4", "value4" },
+            };
+            var sut = new Dictionary<string, string>()
+            {
+                { "key1", "value1" },
+                { "key2", "value2" },
+                { "key3", "value3" },
+            };
+
+            var expected = new Dictionary<string, string>()
+            {
+                { "key1", "value1" },
+                { "key2", "value22" },
+                { "key3", "" },
+                { "key4", "value4" },
+            };
+
+            // Act
+            var actual = sut.MergeWith(keysToMerge);
+
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
     }
 }

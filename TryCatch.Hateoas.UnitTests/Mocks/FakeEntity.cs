@@ -5,10 +5,18 @@
 
 namespace TryCatch.Hateoas.UnitTests.Mocks
 {
-    using System;
+    using System.Collections.Generic;
+    using TryCatch.Hateoas.Models;
 
-    public class FakeEntity
+    public class FakeEntity : IItemModel
     {
         public string Id => "123456";
+
+        public FakeEntity()
+        {
+            this.Links = new HashSet<Link>();
+        }
+
+        public IEnumerable<Link> Links { get; set; }
     }
 }
