@@ -110,6 +110,13 @@ namespace System
                 }
             }
 
+            if (baseUri.EndsWith("?"))
+            {
+                baseUri = baseUri.Length > 1
+                    ? baseUri.Substring(0, baseUri.Length - 1)
+                    : string.Empty;
+            }
+
             return baseUri;
         }
     }

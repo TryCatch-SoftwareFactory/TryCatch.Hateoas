@@ -17,8 +17,10 @@ namespace TryCatch.Hateoas.Models
         public Link()
         {
             this.queryParams = new Dictionary<string, string>();
-
             this.identity = string.Empty;
+            this.Rel = string.Empty;
+            this.Action = string.Empty;
+            this.Uri = new Uri("/", UriKind.Relative);
         }
 
         public string Href
@@ -27,16 +29,17 @@ namespace TryCatch.Hateoas.Models
             {
                 var queryParams = this.queryParams.AsQueryString();
 
+                var relativePath = !string.IsNullOrWhiteSpace(this.identity)
+                    ? $"{this.identity}?{queryParams}"
+                    : $"?{queryParams}";
+
                 var uri = this.Uri is null ? new Uri("/", UriKind.Relative) : this.Uri;
 
-                if (!string.IsNullOrWhiteSpace(this.identity))
-                {
-                    uri = new Uri(uri, new Uri($"/{this.identity}", UriKind.Relative));
-                }
+                var href = uri.IsAbsoluteUri
+                    ? new Uri(uri, new Uri($"{relativePath}", UriKind.Relative)).ToString()
+                    : $"/{relativePath}";
 
-                uri = new Uri(uri, new Uri($"?{queryParams}", UriKind.Relative));
-
-                return uri.ToString();
+                return href.CleanUri();
             }
         }
 
@@ -90,11 +93,21 @@ namespace TryCatch.Hateoas.Models
 
             link.AddOrUpdateQueryParam(this.queryParams);
 
+            if (!string.IsNullOrWhiteSpace(this.identity))
+            {
+                link.AddIdentity(this.identity);
+            }
+
             return link;
         }
 
         public Link CloneWithRel(string relation)
         {
+            if (string.IsNullOrWhiteSpace(relation))
+            {
+                throw new ArgumentException($"{nameof(relation)} can't be null, emtpy or whitespace.", nameof(relation));
+            }
+
             var link = this.Clone();
 
             link.Rel = relation;

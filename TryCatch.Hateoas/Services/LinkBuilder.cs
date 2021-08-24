@@ -20,15 +20,7 @@ namespace TryCatch.Hateoas.Services
 
         public static LinkBuilder Build() => new LinkBuilder();
 
-        public Link Create()
-        {
-            if (this.link is null)
-            {
-                throw new ArgumentException("Can't call create before build");
-            }
-
-            return this.link;
-        }
+        public Link Create() => this.link;
 
         public LinkBuilder WithUri(Uri uri)
         {
