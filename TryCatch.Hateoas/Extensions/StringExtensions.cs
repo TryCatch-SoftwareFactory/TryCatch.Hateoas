@@ -100,24 +100,36 @@ namespace System
                 { "?&", "?" },
                 { "?=", "?" },
                 { "==", "=" },
+                { "//", "/" },
+                { "??", "?" },
+                { "/?", "?" },
             };
+
+            var root = string.Empty;
+            var path = baseUri;
+            var uri = new Uri(baseUri, UriKind.RelativeOrAbsolute);
+
+            if (Uri.IsWellFormedUriString(baseUri, UriKind.Absolute))
+            {
+                var port = uri.IsDefaultPort ? string.Empty : $":{uri.Port}";
+                path = $"{uri.AbsolutePath}?{uri.Query}";
+                root = $"{uri.Scheme}://{uri.Host}{port}";
+            }
 
             foreach (var sub in substrings)
             {
-                while (baseUri.IndexOf(sub.Key) > -1)
+                while (path.IndexOf(sub.Key) > -1)
                 {
-                    baseUri = baseUri.Replace(sub.Key, sub.Value, StringComparison.InvariantCulture);
+                    path = path.Replace(sub.Key, sub.Value, StringComparison.InvariantCulture);
                 }
             }
 
-            if (baseUri.EndsWith("?"))
+            if (path.EndsWith("?"))
             {
-                baseUri = baseUri.Length > 1
-                    ? baseUri.Substring(0, baseUri.Length - 1)
-                    : string.Empty;
+                path = path.Length > 1 ? path.Substring(0, path.Length - 1) : string.Empty;
             }
 
-            return baseUri;
+            return $"{root}{path}";
         }
     }
 }

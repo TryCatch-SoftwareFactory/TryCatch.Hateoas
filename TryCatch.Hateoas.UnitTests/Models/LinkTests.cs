@@ -7,8 +7,10 @@ namespace TryCatch.Hateoas.UnitTests.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using FluentAssertions;
     using TryCatch.Hateoas.Models;
+    using TryCatch.Hateoas.UnitTests.Services;
     using Xunit;
 
     public class LinkTests
@@ -23,10 +25,10 @@ namespace TryCatch.Hateoas.UnitTests.Models
             var link = new Link();
 
             // Act
-            Action act = () => _ = link.AddIdentity(identity);
+            link.AddIdentity(identity);
 
             // Asserts
-            act.Should().Throw<ArgumentException>();
+            link.Identity.Should().BeEmpty();
         }
 
         [Fact]
@@ -41,7 +43,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("/");
+            actual.Href.Should().Be("");
         }
 
         [Fact]
@@ -59,7 +61,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("/");
+            actual.Href.Should().Be("");
         }
 
         [Fact]
@@ -98,7 +100,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/?offset=1");
+            actual.Href.Should().Be($"?offset=1");
         }
 
         [Fact]
@@ -139,7 +141,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/?offset=2");
+            actual.Href.Should().Be($"?offset=2");
         }
 
         [Fact]
@@ -213,7 +215,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             var source = new Link
             {
                 Uri = new Uri("/", UriKind.Relative)
-            };            
+            };
             source.AddOrUpdateQueryParam(queryParameters);
 
             // Act
@@ -223,7 +225,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/?offset=1&limit=100");
+            actual.Href.Should().Be($"?offset=1&limit=100");
         }
 
         [Fact]
@@ -305,6 +307,26 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
             actual.Href.Should().Be($"/{identity}?offset=1&limit=100");
+        }
+
+        [Theory]
+        [MemberData(memberName: nameof(Given.GetHrefInput), MemberType = typeof(Given))]
+        public void Href_should_be_as(string uri, string identity, Dictionary<string, string> queryParams, string expected)
+        {
+            // Arrange
+            var link = new Link
+            {
+                Uri = new Uri(uri)
+            };
+
+            link.AddIdentity(identity);
+            link.AddOrUpdateQueryParam(queryParams);
+
+            // Act
+            var actual = link.Href;
+
+            // Asserts
+            actual.Should().Be(expected);
         }
     }
 }

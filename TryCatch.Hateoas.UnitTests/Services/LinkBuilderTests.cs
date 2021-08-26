@@ -26,7 +26,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("/");
+            actual.Href.Should().Be("");
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("http://localhost");
-            actual.Href.Should().Be("http://localhost/");
+            actual.Href.Should().Be("http://localhost");
         }
 
         [Theory]
@@ -90,7 +90,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().Be(action);
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("/");
+            actual.Href.Should().Be("");
         }
 
         [Theory]
@@ -123,7 +123,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().Be(relation);
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("/");
+            actual.Href.Should().Be("");
         }
 
         [Theory]
@@ -159,7 +159,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/?{key}=");
+            actual.Href.Should().Be($"?{key}=");
         }
 
         [Fact]
@@ -177,7 +177,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/?{key}={value}");
+            actual.Href.Should().Be($"?{key}={value}");
         }
 
         [Fact]
@@ -210,7 +210,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/?{key}={value}");
+            actual.Href.Should().Be($"?{key}={value}");
         }
     }
 }

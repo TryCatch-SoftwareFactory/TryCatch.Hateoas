@@ -12,6 +12,8 @@ namespace TryCatch.Hateoas.Models
     {
         private string identity;
 
+        private Uri uri;
+
         private IDictionary<string, string> queryParams;
 
         public Link()
@@ -20,7 +22,7 @@ namespace TryCatch.Hateoas.Models
             this.identity = string.Empty;
             this.Rel = string.Empty;
             this.Action = string.Empty;
-            this.Uri = new Uri("/", UriKind.Relative);
+            this.uri = new Uri("/", UriKind.Relative);
         }
 
         public string Href
@@ -29,15 +31,15 @@ namespace TryCatch.Hateoas.Models
             {
                 var queryParams = this.queryParams.AsQueryString();
 
-                var relativePath = !string.IsNullOrWhiteSpace(this.identity)
-                    ? $"{this.identity}?{queryParams}"
-                    : $"?{queryParams}";
+                var path = this.uri.IsAbsoluteUri ? this.uri.AbsolutePath : string.Empty;
 
-                var uri = this.Uri is null ? new Uri("/", UriKind.Relative) : this.Uri;
+                var relativePath = $"{path}/{this.identity}?{queryParams}".CleanUri();
 
-                var href = uri.IsAbsoluteUri
-                    ? new Uri(uri, new Uri($"{relativePath}", UriKind.Relative)).ToString()
-                    : $"/{relativePath}";
+                var uri = this.uri.IsAbsoluteUri
+                    ? new Uri(this.Uri, new Uri(relativePath, UriKind.Relative))
+                    : new Uri(relativePath, UriKind.Relative);
+
+                var href = uri.ToString();
 
                 return href.CleanUri();
             }
@@ -47,13 +49,26 @@ namespace TryCatch.Hateoas.Models
 
         public string Action { get; internal set; }
 
-        public Uri Uri { get; internal set; }
+        public string Identity => this.identity;
+
+        public Uri Uri
+        {
+            get
+            {
+                return this.uri;
+            }
+
+            internal set
+            {
+                this.uri = value is null ? new Uri("/", UriKind.Relative) : value;
+            }
+        }
 
         public Link AddIdentity(string identity)
         {
             if (string.IsNullOrWhiteSpace(identity))
             {
-                throw new ArgumentException($"{nameof(identity)} can't be null, empty or whitespace.", nameof(identity));
+                identity = string.Empty;
             }
 
             this.identity = identity;

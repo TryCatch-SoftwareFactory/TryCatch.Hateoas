@@ -252,5 +252,33 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
             actual.Should().Be(expected);
         }
 
+        [Theory]
+        [InlineData("//api//?&key1=2", "/api?key1=2")]
+        [InlineData("https://localhost//api//?&key1=2", "https://localhost/api?key1=2")]
+        [InlineData("https://localhost:5001//api//?&key1=2", "https://localhost:5001/api?key1=2")]
+        [InlineData("http://localhost//api//?&key1=2", "http://localhost/api?key1=2")]
+        [InlineData("http://localhost:5001//api//?&key1=2", "http://localhost:5001/api?key1=2")]
+        [InlineData("https://localhost//api?&key1=2", "https://localhost/api?key1=2")]
+        [InlineData("https://localhost:5001/api?&key1=2", "https://localhost:5001/api?key1=2")]
+        [InlineData("http://localhost//api?&key1=2", "http://localhost/api?key1=2")]
+        [InlineData("http://localhost:5001//api?&key1=2", "http://localhost:5001/api?key1=2")]
+        [InlineData("https://localhost//api?key1=2", "https://localhost/api?key1=2")]
+        [InlineData("https://localhost:5001/api?key1=2", "https://localhost:5001/api?key1=2")]
+        [InlineData("http://localhost//api?key1=2", "http://localhost/api?key1=2")]
+        [InlineData("http://localhost:5001//api?key1=2", "http://localhost:5001/api?key1=2")]
+        [InlineData("https://localhost//api??=key1=2&&k2==2", "https://localhost/api?key1=2&k2=2")]
+        [InlineData("https://localhost:5001/api?key1=2&&k2==2", "https://localhost:5001/api?key1=2&k2=2")]
+        [InlineData("http://localhost//api??key1=2&&k2==2", "http://localhost/api?key1=2&k2=2")]
+        [InlineData("http://localhost:5001//api??key1=2&&k2==2", "http://localhost:5001/api?key1=2&k2=2")]
+        public void CleanUri_ok(string query, string expected)
+        {
+            // Arrange
+
+            // Act
+            var actual = query.CleanUri();
+
+            // Asserts
+            actual.Should().Be(expected);
+        }
     }
 }

@@ -36,6 +36,7 @@ namespace TryCatch.Hateoas.Services
             var uriBuilder = this.httpRequest.Host.Port.HasValue
                 ? new UriBuilder(this.httpRequest.Scheme, this.httpRequest.Host.Host, this.httpRequest.Host.Port.Value)
                 : new UriBuilder(this.httpRequest.Scheme, this.httpRequest.Host.Host);
+
             var relativeUri = this.httpRequest.Path.HasValue ? this.httpRequest.Path.Value : string.Empty;
             this.urlCollectionBase = new Uri(uriBuilder.Uri, relativeUri);
             var queryParams = this.httpRequest.Query.ToDictionary(x => x.Key, x => x.Value.ToString());

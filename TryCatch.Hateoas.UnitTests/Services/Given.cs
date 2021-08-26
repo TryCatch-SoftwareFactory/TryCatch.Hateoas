@@ -6,6 +6,36 @@
 
     public class Given
     {
+        public static IEnumerable<object[]> GetHrefInput()
+        {
+            /// string uri, string identity, Dictionary<string, string> queryParams, string expected
+            yield return new object[] { "https://localhost:5001/", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "https://localhost:5001/20021?offset=1&limit=100" };
+            yield return new object[] { "https://localhost:5001", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "https://localhost:5001/20021?offset=1&limit=100" };
+            yield return new object[] { "http://localhost:5001/", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "http://localhost:5001/20021?offset=1&limit=100" };
+            yield return new object[] { "http://localhost:5001", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "http://localhost:5001/20021?offset=1&limit=100" };
+            yield return new object[] { "https://localhost/", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "https://localhost/20021?offset=1&limit=100" };
+            yield return new object[] { "https://localhost", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "https://localhost/20021?offset=1&limit=100" };
+            yield return new object[] { "http://localhost/", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "http://localhost/20021?offset=1&limit=100" };
+            yield return new object[] { "http://localhost", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "http://localhost/20021?offset=1&limit=100" };
+            yield return new object[] { "https://localhost/api/", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "https://localhost/api/20021?offset=1&limit=100" };
+            yield return new object[] { "https://localhost/api", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "https://localhost/api/20021?offset=1&limit=100" };
+            yield return new object[] { "http://localhost/api/", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "http://localhost/api/20021?offset=1&limit=100" };
+            yield return new object[] { "http://localhost/api", "20021", new Dictionary<string, string> { { "offset", "1" }, { "limit", "100" } }, "http://localhost/api/20021?offset=1&limit=100" };
+            yield return new object[] { "https://localhost:5001/", "20021", new Dictionary<string, string>(), "https://localhost:5001/20021" };
+            yield return new object[] { "https://localhost:5001", "20021", new Dictionary<string, string>(), "https://localhost:5001/20021" };
+            yield return new object[] { "http://localhost:5001/", "20021", new Dictionary<string, string>(), "http://localhost:5001/20021" };
+            yield return new object[] { "http://localhost:5001", "20021", new Dictionary<string, string>(), "http://localhost:5001/20021" };
+            yield return new object[] { "https://localhost/", "20021", new Dictionary<string, string>(), "https://localhost/20021" };
+            yield return new object[] { "https://localhost", "20021", new Dictionary<string, string>(), "https://localhost/20021" };
+            yield return new object[] { "http://localhost/", "20021", new Dictionary<string, string>(), "http://localhost/20021" };
+            yield return new object[] { "http://localhost", "20021", new Dictionary<string, string>(), "http://localhost/20021" };
+            yield return new object[] { "https://localhost/api/", "20021", new Dictionary<string, string>(), "https://localhost/api/20021" };
+            yield return new object[] { "https://localhost/api", "20021", new Dictionary<string, string>(), "https://localhost/api/20021" };
+            yield return new object[] { "http://localhost/api/", "20021", new Dictionary<string, string>(), "http://localhost/api/20021" };
+            yield return new object[] { "http://localhost/api", "20021", new Dictionary<string, string>(), "http://localhost/api/20021" };
+        }
+
+
         public static IEnumerable<object[]> GetPagesInput()
         {
             /// long offset, long limit, long total, int maxPages, IEnumerable<PageInfo> pages
