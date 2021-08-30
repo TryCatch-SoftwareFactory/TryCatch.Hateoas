@@ -18,6 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The <see cref="IServiceCollection"/> reference.</returns>
         public static IServiceCollection AddHateoasServices(this IServiceCollection service) =>
             service
+                .AddHttpContextAccessor()
                 .AddSingleton<IPagingEngine, PagingEngine>()
                 .AddTransient<ILinksService, LinksService>();
 

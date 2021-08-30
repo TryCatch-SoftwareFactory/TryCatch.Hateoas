@@ -2,6 +2,7 @@
 // Copyright © TryCatch Software Factory All rights reserved.
 // Licensed under the MIT license. See LICENSE.md file in the project root for full license information.
 // </copyright>
+[assembly: System.Runtime.CompilerServices.InternalsVisibleToAttribute("TryCatch.Hateoas.UnitTests")]
 
 namespace TryCatch.Hateoas.Models
 {
@@ -42,7 +43,9 @@ namespace TryCatch.Hateoas.Models
 
                 var path = this.uri.IsAbsoluteUri ? this.uri.AbsolutePath : string.Empty;
 
-                var relativePath = $"{path}/{this.identity}?{queryParams}".CleanUri();
+                var relativePath = path.EndsWith($"/{this.identity}")
+                    ? $"{path}?{queryParams}".CleanUri()
+                    : $"{path}/{this.identity}?{queryParams}".CleanUri();
 
                 var uri = this.uri.IsAbsoluteUri
                     ? new Uri(this.Uri, new Uri(relativePath, UriKind.Relative))
@@ -67,19 +70,19 @@ namespace TryCatch.Hateoas.Models
         /// <summary>
         /// Gets the identity of the resource associated with the hypermedia link.
         /// </summary>
-        public string Identity => this.identity;
+        internal string Identity => this.identity;
 
         /// <summary>
         /// Gets the base URI for the resource.
         /// </summary>
-        public Uri Uri
+        internal Uri Uri
         {
             get
             {
                 return this.uri;
             }
 
-            internal set
+            set
             {
                 this.uri = value is null ? new Uri("/", UriKind.Relative) : value;
             }
