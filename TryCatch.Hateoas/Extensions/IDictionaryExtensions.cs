@@ -60,11 +60,25 @@ namespace System.Collections.Generic
             return keys.Where(x => !without.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        internal static string AsQueryString(this IDictionary<string, string> queryParams) => queryParams.Any()
-            ? ($"&{string.Join("&", queryParams.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => $"{x.Key}={x.Value}"))}"
-                + $"{string.Join("&", queryParams.Where(x => string.IsNullOrWhiteSpace(x.Value)).Select(x => $"{x.Key}="))}")
-                .Replace("&&", "&", StringComparison.InvariantCulture)
-            : string.Empty;
+        internal static string AsQueryString(this IDictionary<string, string> queryParams)
+        {
+            var queryParam = string.Empty;
+
+            if (queryParams.Any())
+            {
+                if (queryParams.Any(x => !string.IsNullOrWhiteSpace(x.Value)))
+                {
+                    queryParam = $"&{string.Join("&", queryParams.Where(x => !string.IsNullOrWhiteSpace(x.Value)).OrderBy(x => x.Key).Select(x => $"{x.Key}={x.Value}"))}";
+                }
+
+                if (queryParams.Any(x => string.IsNullOrWhiteSpace(x.Value)))
+                {
+                    queryParam = $"{queryParam}&{string.Join("&", queryParams.Where(x => string.IsNullOrWhiteSpace(x.Value)).OrderBy(x => x.Key).Select(x => $"{x.Key}="))}";
+                }
+            }
+
+            return queryParam;
+        }
 
         internal static IDictionary<string, string> NormalizedKeys(this IDictionary<string, string> keys, IDictionary<string, string> normalizedKeys)
         {

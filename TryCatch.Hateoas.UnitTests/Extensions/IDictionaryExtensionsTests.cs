@@ -291,11 +291,12 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
         public void Parse_AsQueryString_Ok()
         {
             // Arrange
-            var expected = "&key1=value1&key2=value2&key3=value3";
+            var expected = "&key1=value1&key3=value3&key0=&key2=";
             var sut = new Dictionary<string, string>()
             {
                 { "key1", "value1" },
-                { "key2", "value2" },
+                { "key0", "" },
+                { "key2", "" },
                 { "key3", "value3" },
             };
 

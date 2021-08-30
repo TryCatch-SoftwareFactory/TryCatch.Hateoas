@@ -67,7 +67,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
         }
 
         [Theory]
-        [MemberData(memberName: nameof(Given.GetPagesInput), MemberType = typeof(Given))]
+        [MemberData(memberName: nameof(Given.PagesInput), MemberType = typeof(Given))]
         public void GetPages_ok(long offset, long limit, long total, int maxPages, IEnumerable<PageInfo> pages)
         {
             // Arrange

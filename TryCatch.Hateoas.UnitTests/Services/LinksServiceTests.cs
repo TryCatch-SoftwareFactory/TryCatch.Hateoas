@@ -29,11 +29,14 @@ namespace TryCatch.Hateoas.UnitTests.Services
 
         public LinksServiceTests()
         {
-            var host = HostString.FromUriComponent(new Uri("https://localhost"));
+            var uri = new Uri("https://localhost/api", UriKind.Absolute);
+            var host = HostString.FromUriComponent(uri);
+            var path = PathString.FromUriComponent(uri);
             this.httpContextAccessor = Substitute.For<IHttpContextAccessor>();
             this.httpContext = Substitute.For<HttpContext>();
-            this.httpRequest = Substitute.For<HttpRequest>();            
+            this.httpRequest = Substitute.For<HttpRequest>();
             this.httpRequest.Host.Returns(host);
+            this.httpRequest.Path.Returns(path);
             this.httpRequest.Scheme.Returns("https");
             this.httpContext.Request.Returns(this.httpRequest);
             this.httpContextAccessor.HttpContext.Returns(this.httpContext);            
@@ -128,6 +131,33 @@ namespace TryCatch.Hateoas.UnitTests.Services
         }
 
         [Fact]
+        public void Construct_without_port()
+        {
+            // Arrange
+            var host = HostString.FromUriComponent(new Uri("http://localhost"));
+            var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+            var httpContext = Substitute.For<HttpContext>();
+            var httpRequest = Substitute.For<HttpRequest>();
+            httpRequest.Host.Returns(host);
+            httpRequest.Scheme.Returns("http");
+            httpContext.Request.Returns(httpRequest);
+            httpContextAccessor.HttpContext.Returns(httpContext);
+            var services = new LinksService(this.pagingEngine, httpContextAccessor);
+            var identity = Guid.NewGuid().ToString();
+            var templates = new HashSet<LinkInfo>()
+            {
+                new LinkInfo("self", "GET")
+            };
+
+            // Act
+            var links = services.GetEntityLinks(templates, identity);
+
+            // Asserts
+            links.Should().HaveCount(1);
+            links.First().Href.Should().Be($"http://localhost/{identity}");
+        }
+
+        [Fact]
         public void Construct_with_path()
         {
             // Arrange
@@ -157,81 +187,123 @@ namespace TryCatch.Hateoas.UnitTests.Services
             links.First().Href.Should().Be($"https://localhost:5001/api/items/{identity}");
         }
 
-        ////[Fact]
-        ////public void GetEntityLinks_Without_Entity()
-        ////{
-        ////    // Arrange
-        ////    FakeEntity entity = null;
+        [Fact]
+        public void GetEntityLinks_Without_Templates()
+        {
+            // Arrange
+            IEnumerable<LinkInfo> templates = null;
+            var identity = Guid.NewGuid().ToString();
 
-        ////    // Act
-        ////    Action actual = () => _ = this.sut.GetEntityLinks(entity);
+            // Act
+            Action actual = () => _ = this.sut.GetEntityLinks(templates, identity);
 
-        ////    // Asserts
-        ////    actual.Should().Throw<ArgumentNullException>();
-        ////}
+            // Asserts
+            actual.Should().Throw<ArgumentNullException>();
+        }
 
-        ////[Fact]
-        ////public void GetEntityLinks_With_Invalid_Entity()
-        ////{
-        ////    // Arrange
-        ////    string entity = null;
+        [Theory]
+        [MemberData(memberName: nameof(Given.EntityLinksInput), MemberType = typeof(Given))]
+        public void GetEntityLinks_Ok(IEnumerable<LinkInfo> templates, string identity, IEnumerable<Link> expected)
+        {
+            // Arrange
 
-        ////    // Act
-        ////    Action actual = () => _ = this.sut.GetEntityLinks(entity);
+            // Act
+            var actual = this.sut.GetEntityLinks(templates, identity);
 
-        ////    // Asserts
-        ////    actual.Should().Throw<ArgumentException>();
-        ////}
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
 
-        ////[Fact]
-        ////public void GetEntityLinks_With_Valid_Entity()
-        ////{
-        ////    // Arrange
-        ////    var entity = Given.ValidEntity();
-        ////    var expected = Given.ExpectedLinksForEntity();
+        [Theory]
+        [InlineData(0, 1, 0)]
+        [InlineData(1, 0, 0)]
+        [InlineData(1, 1, -1)]
+        public void GetPageLinks_with_invalid_arguments(int offset, int limit, long total)
+        {
+            // Arrange
 
-        ////    // Act
-        ////    var actual = this.sut.GetEntityLinks(entity);
+            // Act
+            Action actual = () => _ = this.sut.GetPageLinks(offset, limit, total);
 
-        ////    // Asserts
-        ////    actual.Should().BeEquivalentTo(expected);
-        ////}        
+            // Asserts
+            actual.Should().Throw<ArgumentOutOfRangeException>();
+        }
 
-        ////[Theory]
-        ////[InlineData(0, 10)]
-        ////[InlineData(1, 0)]
-        ////public void GetPageResultLinks_With_Invalid_Args(int offset, int limit)
-        ////{
-        ////    // Arrange
-        ////    var total = 100;
+        [Theory]
+        [MemberData(memberName: nameof(Given.PageLinksInputWithDefaultValues), MemberType = typeof(Given))]
+        public void GetPageLinks_with_defaultValues(int offset, int limit, long total, IEnumerable<Link> expected)
+        {
+            // Arrange            
 
-        ////    // Act
-        ////    Action actual = () => _ = this.sut.GetPageResultLinks(offset, limit, total);
+            // Act
+            var actual = this.sut.GetPageLinks(offset, limit, total).OrderBy(x => x.Rel);
 
-        ////    // Asserts
-        ////    actual.Should().Throw<ArgumentOutOfRangeException>();
-        ////}
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
 
-        ////[Theory]
-        ////[InlineData(1, 1000, 1, new[] { 1 })]
-        ////[InlineData(1, 100, 1, new[] { 1 })]
-        ////[InlineData(1, 10, 91, new []{ 1, 11, 21, 31, 41 })]
-        ////[InlineData(11, 10, 91, new[] { 11, 21, 31, 41, 51 })]
-        ////public void GetPageResultLinks_With_Valid_Args(int offset, int limit, int lastPage, int[] offsets)
-        ////{
-        ////    // Arrange
-        ////    var total = 100;
-        ////    var expected = Given
-        ////        .ExpectedLinksForPageResult(offset, limit, lastPage, offsets)
-        ////        .OrderBy(x => x.Rel);
+        [Theory]
+        [MemberData(memberName: nameof(Given.PageLinksInput), MemberType = typeof(Given))]
+        public void GetPageLinks_with_customValues(
+            int offset,
+            int limit,
+            long total,
+            IDictionary<string, string> defaultQueryParams,
+            IEnumerable<LinkInfo> templates, 
+            IEnumerable<Link> expected)
+        {
+            // Arrange            
 
-        ////    this.sut.SetFakeQueryParams(offset, limit);
+            // Act
+            var actual = this.sut.GetPageLinks(offset, limit, total, defaultQueryParams, templates).OrderBy(x => x.Rel);
 
-        ////    // Act
-        ////    var actual = this.sut.GetPageResultLinks(offset, limit, total).OrderBy(x => x.Rel);
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
 
-        ////    // Asserts
-        ////    actual.Should().BeEquivalentTo(expected);
-        ////}
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        public void GetNextPageLinks_with_invalid_arguments(int offset, int limit)
+        {
+            // Arrange
+
+            // Act
+            Action actual = () => _ = this.sut.GetNextPageLinks(offset, limit);
+
+            // Asserts
+            actual.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Theory]
+        [MemberData(memberName: nameof(Given.NextPageLinksInputWithDefaultValues), MemberType = typeof(Given))]
+        public void GetNextPageLinks_with_defaultValues(int offset, int limit, IEnumerable<Link> expected)
+        {
+            // Arrange            
+
+            // Act
+            var actual = this.sut.GetNextPageLinks(offset, limit).OrderBy(x => x.Rel);
+
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+        [Theory]
+        [MemberData(memberName: nameof(Given.NextPageLinksInput), MemberType = typeof(Given))]
+        public void GetNextPageLinks_with_customValues(
+            int offset,
+            int limit,
+            IDictionary<string, string> defaultQueryParams,
+            IEnumerable<LinkInfo> templates,
+            IEnumerable<Link> expected)
+        {
+            // Arrange            
+
+            // Act
+            var actual = this.sut.GetNextPageLinks(offset, limit, defaultQueryParams, templates).OrderBy(x => x.Rel);
+
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
     }
 }

@@ -129,5 +129,25 @@ namespace TryCatch.Hateoas.Models
 
             return link;
         }
+
+        public Link CloneWithRelAndAction(string relation, string action)
+        {
+            if (string.IsNullOrWhiteSpace(relation))
+            {
+                throw new ArgumentException($"{nameof(relation)} can't be null, emtpy or whitespace.", nameof(relation));
+            }
+
+            if (string.IsNullOrWhiteSpace(action))
+            {
+                throw new ArgumentException($"{nameof(action)} can't be null, emtpy or whitespace.", nameof(action));
+            }
+
+            var link = this.Clone();
+
+            link.Rel = relation;
+            link.Action = action;
+
+            return link;
+        }
     }
 }

@@ -167,7 +167,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/{identity}?offset=1&limit=100");
+            actual.Href.Should().Be($"/{identity}?limit=100&offset=1");
         }
 
         [Fact]
@@ -200,7 +200,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/{identity}?offset=1&limit=500&orderBy=Id");
+            actual.Href.Should().Be($"/{identity}?limit=500&offset=1&orderBy=Id");
         }
 
         [Fact]
@@ -225,7 +225,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"?offset=1&limit=100");
+            actual.Href.Should().Be($"?limit=100&offset=1");
         }
 
         [Fact]
@@ -252,7 +252,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/{identity}?offset=1&limit=100");
+            actual.Href.Should().Be($"/{identity}?limit=100&offset=1");
         }
 
         [Theory]
@@ -306,11 +306,11 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().Be("self");
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be($"/{identity}?offset=1&limit=100");
+            actual.Href.Should().Be($"/{identity}?limit=100&offset=1");
         }
 
         [Theory]
-        [MemberData(memberName: nameof(Given.GetHrefInput), MemberType = typeof(Given))]
+        [MemberData(memberName: nameof(Given.HrefInputs), MemberType = typeof(Given))]
         public void Href_should_be_as(string uri, string identity, Dictionary<string, string> queryParams, string expected)
         {
             // Arrange

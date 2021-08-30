@@ -66,21 +66,21 @@ namespace TryCatch.Hateoas.Services
         {
             ThrowIfLessThan(1, offset, nameof(offset), $"{nameof(offset)} cannot be less than 1");
             ThrowIfLessThan(1, limit, nameof(limit), $"{nameof(limit)} cannot be less than 1");
+            ThrowIfLessThan(0, total, nameof(total), $"{nameof(total)} cannot be less than zero");
 
             if (total < offset)
             {
                 total = offset;
             }
 
-            var maxLinks = maxNumberOfPages + 2;
             var lastOffset = this.pagingEngine.GetLastOffset(limit, total);
-            var pageNumbers = this.pagingEngine.GetPages(offset, total, limit, maxLinks);
+            var pageNumbers = this.pagingEngine.GetPages(offset, limit, total, maxNumberOfPages);
             var queryParams = defaultQueryParams is null ? this.currentQueryParams : defaultQueryParams.MergeWith(this.currentQueryParams);
 
             var baseListLink = LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(pageAction).With(queryParams).Create();
             var firstPage = baseListLink.CloneWithRel($"{pageRel}_first").AddOrUpdateQueryParam("offset", "1").AddOrUpdateQueryParam("limit", $"{limit}");
             var lastPage = firstPage.CloneWithRel($"{pageRel}_last").AddOrUpdateQueryParam("offset", $"{lastOffset}");
-            var pages = pageNumbers.Select(x => firstPage.CloneWithRel($"page_{x.Index}").AddOrUpdateQueryParam("offset", $"{x.Offset}"));
+            var pages = pageNumbers.Select(x => firstPage.CloneWithRel($"{pageRel}_page_{x.Index}").AddOrUpdateQueryParam("offset", $"{x.Offset}"));
 
             var links = new List<Link>
             {
@@ -95,9 +95,10 @@ namespace TryCatch.Hateoas.Services
 
             if (templates != null && templates.Any())
             {
-                var commonLinks = templates
-                    .Select(x => LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(x.Action).WithRel(x.Relation).Create()
-                        .AddOrUpdateQueryParam(queryParams).AddOrUpdateQueryParam(x.DefaultQueryParams));
+                var commonLinks = templates.Select(x => firstPage
+                    .CloneWithRelAndAction(x.Relation, x.Action)
+                    .AddOrUpdateQueryParam("offset", "1")
+                    .AddOrUpdateQueryParam(x.DefaultQueryParams));
 
                 links.AddRange(commonLinks);
             }
@@ -116,14 +117,9 @@ namespace TryCatch.Hateoas.Services
             ThrowIfLessThan(1, offset, nameof(offset), $"{nameof(offset)} cannot be less than 1");
             ThrowIfLessThan(1, limit, nameof(limit), $"{nameof(limit)} cannot be less than 1");
 
-            var queryParams = defaultQueryParams is null ? this.currentQueryParams : defaultQueryParams.MergeWith(this.currentQueryParams);
-
-            var baseLink = LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(pageAction).With(queryParams).Create();
-
-            baseLink.AddOrUpdateQueryParam("limit", $"{limit}");
-
             var prevOffset = this.pagingEngine.GetPrevOffset(offset, limit);
-
+            var queryParams = defaultQueryParams is null ? this.currentQueryParams : defaultQueryParams.MergeWith(this.currentQueryParams);
+            var baseLink = LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(pageAction).With(queryParams).Create().AddOrUpdateQueryParam("limit", $"{limit}");
             var prevPage = baseLink.CloneWithRel($"{pageRel}_prev").AddOrUpdateQueryParam("offset", $"{prevOffset}");
             var nextPage = baseLink.CloneWithRel($"{pageRel}_next").AddOrUpdateQueryParam("offset", $"{offset + limit}");
 
@@ -135,9 +131,11 @@ namespace TryCatch.Hateoas.Services
 
             if (templates != null && templates.Any())
             {
-                var commonLinks = templates
-                    .Select(x => LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(x.Action).WithRel(x.Relation).Create()
-                        .AddOrUpdateQueryParam(queryParams).AddOrUpdateQueryParam(x.DefaultQueryParams));
+                var commonLinks = templates.Select(x => baseLink
+                    .CloneWithRelAndAction(x.Relation, x.Action)
+                    .AddOrUpdateQueryParam("offset", "1")
+                    .AddOrUpdateQueryParam(x.DefaultQueryParams));
+
                 links.AddRange(commonLinks);
             }
 
@@ -153,6 +151,14 @@ namespace TryCatch.Hateoas.Services
         }
 
         private static void ThrowIfLessThan(int threashold, int value, string name, string message)
+        {
+            if (value < threashold)
+            {
+                throw new ArgumentOutOfRangeException(name, message);
+            }
+        }
+
+        private static void ThrowIfLessThan(long threashold, long value, string name, string message)
         {
             if (value < threashold)
             {
