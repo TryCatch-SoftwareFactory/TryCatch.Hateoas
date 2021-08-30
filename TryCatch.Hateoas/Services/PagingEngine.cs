@@ -9,6 +9,9 @@ namespace TryCatch.Hateoas.Services
     using System.Collections.Generic;
     using TryCatch.Hateoas.Models;
 
+    /// <summary>
+    /// Paging engine. Allows calculating the value of differents paging parameters.
+    /// </summary>
     public class PagingEngine : IPagingEngine
     {
         /// <inheritdoc/>

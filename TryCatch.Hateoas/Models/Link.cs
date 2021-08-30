@@ -8,6 +8,9 @@ namespace TryCatch.Hateoas.Models
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Represents a Hypermedia link for a resource.
+    /// </summary>
     public class Link
     {
         private string identity;
@@ -16,6 +19,9 @@ namespace TryCatch.Hateoas.Models
 
         private IDictionary<string, string> queryParams;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Link"/> class.
+        /// </summary>
         public Link()
         {
             this.queryParams = new Dictionary<string, string>();
@@ -25,6 +31,9 @@ namespace TryCatch.Hateoas.Models
             this.uri = new Uri("/", UriKind.Relative);
         }
 
+        /// <summary>
+        /// Gets the current hypermedia link reference.
+        /// </summary>
         public string Href
         {
             get
@@ -45,12 +54,24 @@ namespace TryCatch.Hateoas.Models
             }
         }
 
+        /// <summary>
+        /// Gets the hypermedia relation type (self, update, list...).
+        /// </summary>
         public string Rel { get; internal set; }
 
+        /// <summary>
+        /// Gets the action that must be used when executing the hypermedia link.
+        /// </summary>
         public string Action { get; internal set; }
 
+        /// <summary>
+        /// Gets the identity of the resource associated with the hypermedia link.
+        /// </summary>
         public string Identity => this.identity;
 
+        /// <summary>
+        /// Gets the base URI for the resource.
+        /// </summary>
         public Uri Uri
         {
             get
@@ -64,6 +85,11 @@ namespace TryCatch.Hateoas.Models
             }
         }
 
+        /// <summary>
+        /// Allows setting the identity of the resoruce.
+        /// </summary>
+        /// <param name="identity">The resource identity on string format.</param>
+        /// <returns>A <see cref="Link"/> reference to the current hypermedia link.</returns>
         public Link AddIdentity(string identity)
         {
             if (string.IsNullOrWhiteSpace(identity))
@@ -76,6 +102,12 @@ namespace TryCatch.Hateoas.Models
             return this;
         }
 
+        /// <summary>
+        /// Allows adding or updating a query parameter for the hypermedia link.
+        /// </summary>
+        /// <param name="key">The key name.</param>
+        /// <param name="value">The value associated to the key on string format.</param>
+        /// <returns>A <see cref="Link"/> reference to the current hypermedia link.</returns>
         public Link AddOrUpdateQueryParam(string key, string value)
         {
             if (this.queryParams.ContainsKey(key))
@@ -90,6 +122,11 @@ namespace TryCatch.Hateoas.Models
             return this;
         }
 
+        /// <summary>
+        /// Allows adding or updating a query parameters collection for the hypermedia link.
+        /// </summary>
+        /// <param name="queryParams">The <see cref="IDictionary{TKey, TValue}"/> reference to the current collection to be added.</param>
+        /// <returns>A <see cref="Link"/> reference to the current hypermedia link.</returns>
         public Link AddOrUpdateQueryParam(IDictionary<string, string> queryParams)
         {
             this.queryParams = this.queryParams.MergeWith(queryParams);
@@ -97,6 +134,10 @@ namespace TryCatch.Hateoas.Models
             return this;
         }
 
+        /// <summary>
+        /// Allows cloning the current link.
+        /// </summary>
+        /// <returns>A <see cref="Link"/> reference to the new hypermedia link.</returns>
         public Link Clone()
         {
             var link = new Link
@@ -116,6 +157,11 @@ namespace TryCatch.Hateoas.Models
             return link;
         }
 
+        /// <summary>
+        /// Allows cloning the current link setting a new hypermedia relation type.
+        /// </summary>
+        /// <param name="relation">The new relation type.</param>
+        /// <returns>A <see cref="Link"/> reference to the new hypermedia link.</returns>
         public Link CloneWithRel(string relation)
         {
             if (string.IsNullOrWhiteSpace(relation))
@@ -130,6 +176,12 @@ namespace TryCatch.Hateoas.Models
             return link;
         }
 
+        /// <summary>
+        /// Allows cloning the current link setting a new hypermedia relation type and action.
+        /// </summary>
+        /// <param name="relation">The new relation type.</param>
+        /// <param name="action">The new action.</param>
+        /// <returns>A <see cref="Link"/> reference to the new hypermedia link.</returns>
         public Link CloneWithRelAndAction(string relation, string action)
         {
             if (string.IsNullOrWhiteSpace(relation))

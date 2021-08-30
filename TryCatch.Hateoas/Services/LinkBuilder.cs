@@ -9,6 +9,9 @@ namespace TryCatch.Hateoas.Services
     using System.Collections.Generic;
     using TryCatch.Hateoas.Models;
 
+    /// <summary>
+    /// The hypermedia link builder.
+    /// </summary>
     public class LinkBuilder
     {
         private readonly Link link;
@@ -18,10 +21,23 @@ namespace TryCatch.Hateoas.Services
             this.link = new Link();
         }
 
+        /// <summary>
+        /// Gets a new LinkBuilder instance.
+        /// </summary>
+        /// <returns>A <see cref="LinkBuilder"/> new instance.</returns>
         public static LinkBuilder Build() => new LinkBuilder();
 
-        public Link Create() => this.link;
+        /// <summary>
+        /// Gets the reference to the current link built.
+        /// </summary>
+        /// <returns>A <see cref="Link"/> reference to the current link.</returns>
+        public Link Create() => this.link.Clone();
 
+        /// <summary>
+        /// Allows setting the resource URI for the current hypermedia link.
+        /// </summary>
+        /// <param name="uri">The <see cref="Uri"/> reference for the hypermedia link.</param>
+        /// <returns>A <see cref="LinkBuilder"/> reference to the current builder.</returns>
         public LinkBuilder WithUri(Uri uri)
         {
             if (uri is null)
@@ -34,6 +50,11 @@ namespace TryCatch.Hateoas.Services
             return this;
         }
 
+        /// <summary>
+        /// Allows setting the resource action for the current hypermedia link.
+        /// </summary>
+        /// <param name="action">The action of the hypermedia link.</param>
+        /// <returns>A <see cref="LinkBuilder"/> reference to the current builder.</returns>
         public LinkBuilder WithAction(string action)
         {
             if (string.IsNullOrWhiteSpace(action))
@@ -46,6 +67,11 @@ namespace TryCatch.Hateoas.Services
             return this;
         }
 
+        /// <summary>
+        /// Allows setting the relation type for the current hypermedia link.
+        /// </summary>
+        /// <param name="relation">The relation type of the hypermedia link.</param>
+        /// <returns>A <see cref="LinkBuilder"/> reference to the current builder.</returns>
         public LinkBuilder WithRel(string relation)
         {
             if (string.IsNullOrWhiteSpace(relation))
@@ -58,6 +84,12 @@ namespace TryCatch.Hateoas.Services
             return this;
         }
 
+        /// <summary>
+        /// Allows setting a key-value pair for the current hypermedia link query parameters.
+        /// </summary>
+        /// <param name="key">The key name of the query parameter.</param>
+        /// <param name="value">The value of the query parameter.</param>
+        /// <returns>A <see cref="LinkBuilder"/> reference to the current builder.</returns>
         public LinkBuilder With(string key, string value)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -75,6 +107,11 @@ namespace TryCatch.Hateoas.Services
             return this;
         }
 
+        /// <summary>
+        /// Allows setting a key-value collection for the current hypermedia link query parameters.
+        /// </summary>
+        /// <param name="queryParams">The <see cref="IDictionary{TKey, TValue}"/> reference to the collection.</param>
+        /// <returns>A <see cref="LinkBuilder"/> reference to the current builder.</returns>
         public LinkBuilder With(IDictionary<string, string> queryParams)
         {
             if (queryParams is null)

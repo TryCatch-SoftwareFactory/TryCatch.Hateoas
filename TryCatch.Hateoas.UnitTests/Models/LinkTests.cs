@@ -31,6 +31,25 @@ namespace TryCatch.Hateoas.UnitTests.Models
             link.Identity.Should().BeEmpty();
         }
 
+        [Theory]
+        [InlineData(null, "action")]
+        [InlineData("", "action")]
+        [InlineData(" ", "action")]
+        [InlineData("relation", null)]
+        [InlineData("relation", "")]
+        [InlineData("relation", " ")]
+        public void Clonw_with_invalid_arguments(string relation, string action)
+        {
+            // Arrange
+            var link = new Link();
+
+            // Act
+            Action act = () => _ = link.CloneWithRelAndAction(relation, action);
+
+            // Asserts
+            act.Should().Throw<ArgumentException>();
+        }
+
         [Fact]
         public void Construct_with_default_values()
         {

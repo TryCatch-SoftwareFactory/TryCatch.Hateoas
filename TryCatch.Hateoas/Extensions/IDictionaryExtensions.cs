@@ -50,16 +50,6 @@ namespace System.Collections.Generic
             return current;
         }
 
-        internal static IDictionary<string, string> FilterKeys(this IDictionary<string, string> keys, IEnumerable<string> without)
-        {
-            if (without is null)
-            {
-                throw new ArgumentNullException(nameof(without));
-            }
-
-            return keys.Where(x => !without.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
-        }
-
         internal static string AsQueryString(this IDictionary<string, string> queryParams)
         {
             var queryParam = string.Empty;

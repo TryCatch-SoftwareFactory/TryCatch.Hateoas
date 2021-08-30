@@ -10,8 +10,6 @@ namespace TryCatch.Hateoas.UnitTests.Mocks
 
     public class FakeEntity : IItemModel
     {
-        public string Id => "123456";
-
         public FakeEntity()
         {
             this.Links = new HashSet<Link>();

@@ -22,6 +22,11 @@ namespace TryCatch.Hateoas.Services
         private readonly IDictionary<string, string> currentQueryParams = new Dictionary<string, string>();
         private readonly Uri urlCollectionBase;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinksService"/> class.
+        /// </summary>
+        /// <param name="pagingEngine">The <see cref="IPagingEngine"/> reference.</param>
+        /// <param name="httpContextAccessor">The <see cref="IHttpContextAccessor"/> reference.</param>
         public LinksService(IPagingEngine pagingEngine, IHttpContextAccessor httpContextAccessor)
         {
             this.pagingEngine = pagingEngine ?? throw new ArgumentNullException(nameof(pagingEngine));
@@ -106,6 +111,7 @@ namespace TryCatch.Hateoas.Services
             return links;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<Link> GetNextPageLinks(
             int offset,
             int limit,
