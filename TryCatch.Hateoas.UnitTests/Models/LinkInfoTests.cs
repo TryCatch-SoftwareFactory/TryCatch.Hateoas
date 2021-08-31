@@ -86,7 +86,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             var action = "GET";
             var queryParams = new Dictionary<string, string>()
             {
-                { "key", string.Empty }
+                { "key", string.Empty },
             };
 
             // Act

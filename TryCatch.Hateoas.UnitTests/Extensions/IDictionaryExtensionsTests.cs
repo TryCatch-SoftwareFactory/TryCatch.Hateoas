@@ -217,8 +217,8 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
             var sut = new Dictionary<string, string>()
             {
                 { "key1", "value1" },
-                { "key0", "" },
-                { "key2", "" },
+                { "key0", string.Empty },
+                { "key2", string.Empty },
                 { "key3", "value3" },
             };
 
@@ -255,7 +255,7 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
             var keysToMerge = new Dictionary<string, string>()
             {
                 { "key2", "value22" },
-                { "key3", "" },
+                { "key3", string.Empty },
                 { "key4", "value4" },
             };
             var sut = new Dictionary<string, string>()
@@ -269,7 +269,7 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
             {
                 { "key1", "value1" },
                 { "key2", "value22" },
-                { "key3", "" },
+                { "key3", string.Empty },
                 { "key4", "value4" },
             };
 

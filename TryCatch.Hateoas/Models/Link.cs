@@ -73,7 +73,7 @@ namespace TryCatch.Hateoas.Models
         internal string Identity => this.identity;
 
         /// <summary>
-        /// Gets the base URI for the resource.
+        /// Gets or sets the base URI for the resource.
         /// </summary>
         internal Uri Uri
         {

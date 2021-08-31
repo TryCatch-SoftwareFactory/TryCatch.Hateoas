@@ -75,5 +75,24 @@ namespace TryCatch.Hateoas.FunctionalTests
             actual.Items.Should().BeEquivalentTo(expected.Items);
             actual.Links.OrderBy(x => x.Rel).Should().BeEquivalentTo(expected.Links.OrderBy(x => x.Rel));
         }
+
+        [Theory]
+        [MemberData(memberName: nameof(Given.BookInput), MemberType = typeof(Given))]
+        public async Task GetBook_ok(int bookId, Book expected)
+        {
+            // Arrange
+            var uri = new Uri($"{BaseUri}/{bookId}", UriKind.RelativeOrAbsolute);
+            var client = this.factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync(uri).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var actual = JsonConvert.DeserializeObject<Book>(content);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            actual.Should().NotBeNull();
+            actual.Should().BeEquivalentTo(expected);
+        }
     }
 }

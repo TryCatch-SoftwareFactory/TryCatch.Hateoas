@@ -21,6 +21,5 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddHttpContextAccessor()
                 .AddSingleton<IPagingEngine, PagingEngine>()
                 .AddTransient<ILinksService, LinksService>();
-
     }
 }

@@ -10,6 +10,70 @@ namespace TryCatch.Hateoas.FunctionalTests
 
     public static class Given
     {
+        public static IEnumerable<object[]> BookInput()
+        {
+            const string href = "http://localhost/api/books";
+            var bookId1 = 1002;
+
+            yield return new object[]
+            {
+                bookId1,
+                new Book()
+                {
+                    Author = $"Author_1",
+                    Id = bookId1,
+                    Title = $"Title_1",
+                    Category = $"Terror",
+                    Links = new HashSet<Link>()
+                    {
+                        new Link { Action = "UPDATE", Href = $"{href}/{bookId1}", Rel = "edit" },
+                        new Link { Action = "GET", Href = $"{href}/{bookId1}", Rel = "details" },
+                        new Link { Action = "DELETE", Href = $"{href}/{bookId1}", Rel = "remove" },
+                    },
+                },
+            };
+
+            bookId1 += 1;
+
+            yield return new object[]
+            {
+                bookId1,
+                new Book()
+                {
+                    Author = $"Author_1",
+                    Id = bookId1,
+                    Title = $"Title_1",
+                    Category = $"Terror",
+                    Links = new HashSet<Link>()
+                    {
+                        new Link { Action = "UPDATE", Href = $"{href}/{bookId1}", Rel = "edit" },
+                        new Link { Action = "GET", Href = $"{href}/{bookId1}", Rel = "details" },
+                        new Link { Action = "DELETE", Href = $"{href}/{bookId1}", Rel = "remove" },
+                    },
+                },
+            };
+
+            bookId1 += 1;
+
+            yield return new object[]
+            {
+                bookId1,
+                new Book()
+                {
+                    Author = $"Author_1",
+                    Id = bookId1,
+                    Title = $"Title_1",
+                    Category = $"Terror",
+                    Links = new HashSet<Link>()
+                    {
+                        new Link { Action = "UPDATE", Href = $"{href}/{bookId1}", Rel = "edit" },
+                        new Link { Action = "GET", Href = $"{href}/{bookId1}", Rel = "details" },
+                        new Link { Action = "DELETE", Href = $"{href}/{bookId1}", Rel = "remove" },
+                    },
+                },
+            };
+        }
+
         public static IEnumerable<object[]> PageQueriesInput()
         {
             var items = GetItems();

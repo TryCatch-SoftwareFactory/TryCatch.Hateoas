@@ -5,7 +5,6 @@
 
 namespace MyBooksApi.Features.Books
 {
-    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using MyBooksApi.Features.Books.Services;

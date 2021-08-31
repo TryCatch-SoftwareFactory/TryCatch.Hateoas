@@ -5,13 +5,9 @@
 
 namespace MyBooksApi.Models
 {
-    using System;
-
     public class PageFilter
     {
         private const string SortAsc = "ASC";
-
-        private string sortAs;
 
         public PageFilter()
         {
@@ -19,7 +15,7 @@ namespace MyBooksApi.Models
             this.Limit = 40;
             this.Offset = 1;
             this.OrderBy = string.Empty;
-            this.sortAs = SortAsc;
+            this.SortAs = SortAsc;
         }
 
         public string FilterBy { get; set; }
@@ -30,21 +26,6 @@ namespace MyBooksApi.Models
 
         public string OrderBy { get; set; }
 
-        public string SortAs
-        {
-            get => this.sortAs;
-
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    value = string.Empty;
-                }
-
-                this.sortAs = value;
-            }
-        }
-
-        public bool SortAsAscending => this.sortAs.Equals(SortAsc, StringComparison.Ordinal);
+        public string SortAs { get; set; }
     }
 }

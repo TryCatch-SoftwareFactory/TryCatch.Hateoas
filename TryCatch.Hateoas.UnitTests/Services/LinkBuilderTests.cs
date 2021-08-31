@@ -26,7 +26,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("");
+            actual.Href.Should().Be(string.Empty);
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().Be(action);
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("");
+            actual.Href.Should().Be(string.Empty);
         }
 
         [Theory]
@@ -123,7 +123,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             actual.Rel.Should().Be(relation);
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("");
+            actual.Href.Should().Be(string.Empty);
         }
 
         [Theory]
@@ -150,7 +150,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
         {
             // Arrange
             var builder = LinkBuilder.Build();
-            var key = "offset";            
+            var key = "offset";
 
             // Act
             var actual = builder.With(key, value).Create();
@@ -185,7 +185,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
         {
             // Arrange
             IDictionary<string, string> keyValuesCollection = null;
-            var builder = LinkBuilder.Build();            
+            var builder = LinkBuilder.Build();
 
             // Act
             Action actual = () => _ = builder.With(keyValuesCollection);

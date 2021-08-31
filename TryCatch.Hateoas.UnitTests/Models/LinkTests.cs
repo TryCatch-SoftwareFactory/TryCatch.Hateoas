@@ -62,7 +62,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("");
+            actual.Href.Should().Be(string.Empty);
         }
 
         [Fact]
@@ -73,14 +73,14 @@ namespace TryCatch.Hateoas.UnitTests.Models
             // Act
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
 
             // Asserts
             actual.Rel.Should().BeEmpty();
             actual.Action.Should().BeEmpty();
             actual.Uri.Should().Be("/");
-            actual.Href.Should().Be("");
+            actual.Href.Should().Be(string.Empty);
         }
 
         [Fact]
@@ -92,8 +92,9 @@ namespace TryCatch.Hateoas.UnitTests.Models
             // Act
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
+
             actual.AddIdentity(identity);
 
             // Asserts
@@ -111,8 +112,9 @@ namespace TryCatch.Hateoas.UnitTests.Models
             // Act
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
+
             actual.AddOrUpdateQueryParam("offset", "1");
 
             // Asserts
@@ -131,7 +133,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             // Act
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
             actual.AddIdentity(identity);
             actual.AddOrUpdateQueryParam("offset", "1");
@@ -151,7 +153,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             // Act
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
             actual.AddOrUpdateQueryParam("offset", "1");
             actual.AddOrUpdateQueryParam("offset", "2");
@@ -175,7 +177,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             };
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
             actual.AddIdentity(identity);
 
@@ -202,15 +204,16 @@ namespace TryCatch.Hateoas.UnitTests.Models
             var updatedQueryParameters = new Dictionary<string, string>()
             {
                 { "limit", "500" },
-                { "orderBy", "Id" }
+                { "orderBy", "Id" },
             };
+
             var actual = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
+
             actual.AddIdentity(identity);
             actual.AddOrUpdateQueryParam(queryParameters);
-
 
             // Act
             actual.AddOrUpdateQueryParam(updatedQueryParameters);
@@ -233,8 +236,9 @@ namespace TryCatch.Hateoas.UnitTests.Models
             };
             var source = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
+
             source.AddOrUpdateQueryParam(queryParameters);
 
             // Act
@@ -259,7 +263,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             };
             var source = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
             source.AddIdentity(identity);
             source.AddOrUpdateQueryParam(queryParameters);
@@ -289,8 +293,9 @@ namespace TryCatch.Hateoas.UnitTests.Models
             };
             var source = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
+
             source.AddIdentity(identity);
             source.AddOrUpdateQueryParam(queryParameters);
 
@@ -313,7 +318,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             };
             var source = new Link
             {
-                Uri = new Uri("/", UriKind.Relative)
+                Uri = new Uri("/", UriKind.Relative),
             };
             source.AddIdentity(identity);
             source.AddOrUpdateQueryParam(queryParameters);
@@ -335,7 +340,7 @@ namespace TryCatch.Hateoas.UnitTests.Models
             // Arrange
             var link = new Link
             {
-                Uri = new Uri(uri)
+                Uri = new Uri(uri),
             };
 
             link.AddIdentity(identity);

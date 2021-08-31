@@ -39,8 +39,8 @@ namespace TryCatch.Hateoas.UnitTests.Services
             this.httpRequest.Path.Returns(path);
             this.httpRequest.Scheme.Returns("https");
             this.httpContext.Request.Returns(this.httpRequest);
-            this.httpContextAccessor.HttpContext.Returns(this.httpContext);            
-            this.pagingEngine = new PagingEngine();            
+            this.httpContextAccessor.HttpContext.Returns(this.httpContext);
+            this.pagingEngine = new PagingEngine();
             this.sut = new LinksService(this.pagingEngine, this.httpContextAccessor);
         }
 
@@ -76,7 +76,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             // Arrange
             var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
             var httpContext = Substitute.For<HttpContext>();
-            httpContext.Request.Returns(null as  HttpRequest);
+            httpContext.Request.Returns(null as HttpRequest);
             httpContextAccessor.HttpContext.Returns(httpContext);
 
             // Act
@@ -89,10 +89,10 @@ namespace TryCatch.Hateoas.UnitTests.Services
         [Fact]
         public void Construct_without_host_value()
         {
-            // Arrange            
+            // Arrange
             var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
             var httpContext = Substitute.For<HttpContext>();
-            var httpRequest = Substitute.For<HttpRequest>();            
+            var httpRequest = Substitute.For<HttpRequest>();
             httpContext.Request.Returns(httpRequest);
             httpContextAccessor.HttpContext.Returns(httpContext);
 
@@ -113,13 +113,13 @@ namespace TryCatch.Hateoas.UnitTests.Services
             var httpRequest = Substitute.For<HttpRequest>();
             httpRequest.Host.Returns(host);
             httpRequest.Scheme.Returns("https");
-            httpContext.Request.Returns(httpRequest);            
-            httpContextAccessor.HttpContext.Returns(httpContext);            
+            httpContext.Request.Returns(httpRequest);
+            httpContextAccessor.HttpContext.Returns(httpContext);
             var services = new LinksService(this.pagingEngine, httpContextAccessor);
             var identity = Guid.NewGuid().ToString();
             var templates = new HashSet<LinkInfo>()
             {
-                new LinkInfo("self", "GET")
+                new LinkInfo("self", "GET"),
             };
 
             // Act
@@ -146,7 +146,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             var identity = Guid.NewGuid().ToString();
             var templates = new HashSet<LinkInfo>()
             {
-                new LinkInfo("self", "GET")
+                new LinkInfo("self", "GET"),
             };
 
             // Act
@@ -176,7 +176,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             var identity = Guid.NewGuid().ToString();
             var templates = new HashSet<LinkInfo>()
             {
-                new LinkInfo("self", "GET")
+                new LinkInfo("self", "GET"),
             };
 
             // Act
@@ -233,7 +233,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
         [MemberData(memberName: nameof(Given.PageLinksInputWithDefaultValues), MemberType = typeof(Given))]
         public void GetPageLinks_with_defaultValues(int offset, int limit, long total, IEnumerable<Link> expected)
         {
-            // Arrange            
+            // Arrange
 
             // Act
             var actual = this.sut.GetPageLinks(offset, limit, total).OrderBy(x => x.Rel);
@@ -249,10 +249,10 @@ namespace TryCatch.Hateoas.UnitTests.Services
             int limit,
             long total,
             IDictionary<string, string> defaultQueryParams,
-            IEnumerable<LinkInfo> templates, 
+            IEnumerable<LinkInfo> templates,
             IEnumerable<Link> expected)
         {
-            // Arrange            
+            // Arrange
 
             // Act
             var actual = this.sut.GetPageLinks(offset, limit, total, defaultQueryParams, templates).OrderBy(x => x.Rel);
@@ -279,7 +279,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
         [MemberData(memberName: nameof(Given.NextPageLinksInputWithDefaultValues), MemberType = typeof(Given))]
         public void GetNextPageLinks_with_defaultValues(int offset, int limit, IEnumerable<Link> expected)
         {
-            // Arrange            
+            // Arrange
 
             // Act
             var actual = this.sut.GetNextPageLinks(offset, limit).OrderBy(x => x.Rel);
@@ -297,7 +297,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             IEnumerable<LinkInfo> templates,
             IEnumerable<Link> expected)
         {
-            // Arrange            
+            // Arrange
 
             // Act
             var actual = this.sut.GetNextPageLinks(offset, limit, defaultQueryParams, templates).OrderBy(x => x.Rel);
