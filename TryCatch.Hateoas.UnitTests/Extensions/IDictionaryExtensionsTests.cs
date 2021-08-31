@@ -196,84 +196,6 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
         }
 
         [Fact]
-        public void FilterKeys_With_Empty_Source()
-        {
-            // Arrange
-            var expected = new Dictionary<string, string>();
-            var keysToFilter = new[] { "key1", "key2" };
-
-            // Act
-            var actual = expected.FilterKeys(keysToFilter);
-
-            // Asserts
-            actual.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void FilterKeys_Without_Keys()
-        {
-            // Arrange
-            var expected = new Dictionary<string, string>()
-            {
-                { "key1", "value1" },
-                { "key2", "value2" },
-                { "key3", "value3" },
-                { "key4", "value4" },
-            };
-            string[] keysToFilter = null;
-
-            // Act
-            Action actual = () => _ = expected.FilterKeys(keysToFilter);
-
-            // Asserts
-            Assert.Throws<ArgumentNullException>(actual);
-        }
-
-        [Fact]
-        public void FilterKeys_With_Empty_Keys()
-        {
-            // Arrange
-            var expected = new Dictionary<string, string>()
-            {
-                { "key1", "value1" },
-                { "key2", "value2" },
-                { "key3", "value3" },
-                { "key4", "value4" },
-            };
-            var keysToFilter = new string[] { };
-
-            // Act
-            var actual = expected.FilterKeys(keysToFilter);
-
-            // Asserts
-            actual.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void FilterKeys_With_Valid_Keys()
-        {
-            // Arrange
-            var sources = new Dictionary<string, string>()
-            {
-                { "key1", "value1" },
-                { "key2", "value2" },
-                { "key3", "value3" },
-                { "key4", "value4" },
-            };
-            var keysToFilter = new[] { "key1", "key4", "key2" };
-            var expected = new Dictionary<string, string>()
-            {
-                { "key3", "value3" },
-            };
-
-            // Act
-            var actual = sources.FilterKeys(keysToFilter);
-
-            // Asserts
-            actual.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
         public void Parse_AsQueryString_With_Empty_Collection()
         {
             // Arrange
@@ -291,7 +213,27 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
         public void Parse_AsQueryString_Ok()
         {
             // Arrange
-            var expected = "&key1=value1&key2=value2&key3=value3";
+            var expected = "&key1=value1&key3=value3&key0=&key2=";
+            var sut = new Dictionary<string, string>()
+            {
+                { "key1", "value1" },
+                { "key0", string.Empty },
+                { "key2", string.Empty },
+                { "key3", "value3" },
+            };
+
+            // Act
+            var actual = sut.AsQueryString();
+
+            // Asserts
+            actual.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void MergeWith_with_invalid_arguments()
+        {
+            // Arrange
+            IDictionary<string, string> keysToMerge = null;
             var sut = new Dictionary<string, string>()
             {
                 { "key1", "value1" },
@@ -300,7 +242,39 @@ namespace TryCatch.Hateoas.UnitTests.Extensions
             };
 
             // Act
-            var actual = sut.AsQueryString();
+            Action actual = () => sut.MergeWith(keysToMerge);
+
+            // Asserts
+            actual.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void MergeWith_ok()
+        {
+            // Arrange
+            var keysToMerge = new Dictionary<string, string>()
+            {
+                { "key2", "value22" },
+                { "key3", string.Empty },
+                { "key4", "value4" },
+            };
+            var sut = new Dictionary<string, string>()
+            {
+                { "key1", "value1" },
+                { "key2", "value2" },
+                { "key3", "value3" },
+            };
+
+            var expected = new Dictionary<string, string>()
+            {
+                { "key1", "value1" },
+                { "key2", "value22" },
+                { "key3", string.Empty },
+                { "key4", "value4" },
+            };
+
+            // Act
+            var actual = sut.MergeWith(keysToMerge);
 
             // Asserts
             actual.Should().BeEquivalentTo(expected);
