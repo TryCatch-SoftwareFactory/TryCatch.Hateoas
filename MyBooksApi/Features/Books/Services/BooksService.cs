@@ -5,7 +5,6 @@
 
 namespace MyBooksApi.Features.Books.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -16,11 +15,6 @@ namespace MyBooksApi.Features.Books.Services
     {
         public async Task<Page<Book>> GetBooksPage(PageFilter filter)
         {
-            if (filter is null)
-            {
-                throw new ArgumentNullException(nameof(filter));
-            }
-
             var page = new Page<Book>()
             {
                 Items = GetFakeResults(),
@@ -35,11 +29,6 @@ namespace MyBooksApi.Features.Books.Services
 
         public async Task<NextPage<Book>> GetBooksNextPage(PageFilter filter)
         {
-            if (filter is null)
-            {
-                throw new ArgumentNullException(nameof(filter));
-            }
-
             var page = new NextPage<Book>()
             {
                 Items = GetFakeResults(),
@@ -53,6 +42,7 @@ namespace MyBooksApi.Features.Books.Services
         public async Task<Book> GetById(int id)
         {
             var book = GetFakeResults().First();
+
             book.Id = id;
 
             return await Task.FromResult(book).ConfigureAwait(false);

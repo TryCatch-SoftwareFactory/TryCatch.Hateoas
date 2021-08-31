@@ -23,7 +23,7 @@ namespace MyBooksApi.Features.Books.Services
 
         public BooksMapper(ILinksService linkService)
         {
-            this.linkService = linkService ?? throw new ArgumentNullException(nameof(linkService));
+            this.linkService = linkService;
 
             this.itemTemplates = new HashSet<LinkInfo>()
             {
@@ -49,30 +49,18 @@ namespace MyBooksApi.Features.Books.Services
             };
         }
 
-        public BookDto MapTo(Book book)
-        {
-            if (book is null)
-            {
-                throw new ArgumentNullException(nameof(book));
-            }
-
-            return new BookDto()
+        public BookDto MapTo(Book book) =>
+            new BookDto()
             {
                 Author = book.Author,
                 Category = book.Category,
                 Title = book.Title,
                 Id = book.Id,
-                Links = this.linkService.GetEntityLinks(this.itemTemplates, $"{book.Id}"),
+                Links = this.linkService.GetEntityLinks(this.itemTemplates, $"{book.Id}", "/api/books"),
             };
-        }
 
         public PageModel<BookDto> MapTo(Page<Book> page)
         {
-            if (page is null)
-            {
-                throw new ArgumentNullException(nameof(page));
-            }
-
             var links = this.linkService.GetPageLinks(
                 offset: page.Offset,
                 limit: page.Limit,
@@ -91,14 +79,14 @@ namespace MyBooksApi.Features.Books.Services
 
         public NextPageModel<BookDto> MapTo(NextPage<Book> page)
         {
-            if (page is null)
-            {
-                throw new ArgumentNullException(nameof(page));
-            }
+            var links = this.linkService.GetNextPageLinks(
+                offset: page.Offset,
+                limit: page.Limit,
+                defaultQueryParams: this.defaultQueryParams);
 
             return new NextPageModel<BookDto>(
                 items: page.Items.Select(x => this.MapTo(x)).ToList(),
-                links: new HashSet<Link>(),
+                links: links,
                 offset: page.Offset,
                 limit: page.Limit);
         }

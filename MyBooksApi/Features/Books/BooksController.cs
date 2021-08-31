@@ -20,8 +20,8 @@ namespace MyBooksApi.Features.Books
 
         public BooksController(IBooksMapper mapper, IBooksService service)
         {
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            this.service = service ?? throw new ArgumentNullException(nameof(service));
+            this.mapper = mapper;
+            this.service = service;
         }
 
         [HttpGet("{id}")]

@@ -18,8 +18,9 @@ namespace TryCatch.Hateoas.Services
         /// </summary>
         /// <param name="templates">A <see cref="IEnumerable{LinkInfo}"/> templates collection.</param>
         /// <param name="identity">The identity value of the current item.</param>
+        /// <param name="path">The relative path.</param>
         /// <returns>A <see cref="IEnumerable{Link}"/> reference to the created links collection.</returns>
-        IEnumerable<Link> GetEntityLinks(IEnumerable<LinkInfo> templates, string identity);
+        IEnumerable<Link> GetEntityLinks(IEnumerable<LinkInfo> templates, string identity, string path);
 
         /// <summary>
         /// Allows getting all links for pagination results.

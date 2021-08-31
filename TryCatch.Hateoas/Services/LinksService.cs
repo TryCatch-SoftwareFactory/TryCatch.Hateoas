@@ -21,6 +21,7 @@ namespace TryCatch.Hateoas.Services
         private readonly HttpRequest httpRequest;
         private readonly IDictionary<string, string> currentQueryParams = new Dictionary<string, string>();
         private readonly Uri urlCollectionBase;
+        private readonly Uri urlResourceBase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LinksService"/> class.
@@ -44,17 +45,22 @@ namespace TryCatch.Hateoas.Services
 
             var relativeUri = this.httpRequest.Path.HasValue ? this.httpRequest.Path.Value : string.Empty;
             this.urlCollectionBase = new Uri(uriBuilder.Uri, relativeUri);
+            this.urlResourceBase = new Uri(uriBuilder.Uri, string.Empty);
             var queryParams = this.httpRequest.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
             this.currentQueryParams.AddRange(queryParams);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<Link> GetEntityLinks(IEnumerable<LinkInfo> templates, string identity)
+        public IEnumerable<Link> GetEntityLinks(IEnumerable<LinkInfo> templates, string identity, string path)
         {
             ThrowIfNull(templates, nameof(templates), "Templates can't be null");
+            ThrowIfNull(identity, nameof(identity), "Templates can't be null");
+            ThrowIfNull(path, nameof(path), "Templates can't be null");
+
+            var uri = new Uri(this.urlResourceBase, path);
 
             return templates
-                .Select(x => LinkBuilder.Build().WithUri(this.urlCollectionBase).WithAction(x.Action).WithRel(x.Relation).Create()
+                .Select(x => LinkBuilder.Build().WithUri(uri).WithAction(x.Action).WithRel(x.Relation).Create()
                     .AddOrUpdateQueryParam(x.DefaultQueryParams).AddIdentity(identity));
         }
 

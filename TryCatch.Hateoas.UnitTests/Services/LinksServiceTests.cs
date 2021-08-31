@@ -123,7 +123,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             };
 
             // Act
-            var links = services.GetEntityLinks(templates, identity);
+            var links = services.GetEntityLinks(templates, identity, "/");
 
             // Asserts
             links.Should().HaveCount(1);
@@ -150,7 +150,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             };
 
             // Act
-            var links = services.GetEntityLinks(templates, identity);
+            var links = services.GetEntityLinks(templates, identity, "/");
 
             // Asserts
             links.Should().HaveCount(1);
@@ -180,7 +180,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             };
 
             // Act
-            var links = services.GetEntityLinks(templates, identity);
+            var links = services.GetEntityLinks(templates, identity, "/api/items");
 
             // Asserts
             links.Should().HaveCount(1);
@@ -195,7 +195,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             var identity = Guid.NewGuid().ToString();
 
             // Act
-            Action actual = () => _ = this.sut.GetEntityLinks(templates, identity);
+            Action actual = () => _ = this.sut.GetEntityLinks(templates, identity, "/");
 
             // Asserts
             actual.Should().Throw<ArgumentNullException>();
@@ -208,7 +208,7 @@ namespace TryCatch.Hateoas.UnitTests.Services
             // Arrange
 
             // Act
-            var actual = this.sut.GetEntityLinks(templates, identity);
+            var actual = this.sut.GetEntityLinks(templates, identity, "/api");
 
             // Asserts
             actual.Should().BeEquivalentTo(expected);
