@@ -33,7 +33,7 @@ namespace TryCatch.Hateoas.Models
         /// <param name="links">A <see cref="IEnumerable{Link}"/> reference to the page links collection.</param>
         /// <param name="offset">Offset applied on the source query.</param>
         /// <param name="limit">Limit applied on the source query.</param>
-        public NextPageModel(IEnumerable<TModel> items, IEnumerable<Link> links, int offset, int limit)
+        public NextPageModel(IEnumerable<TModel> items, IEnumerable<Link> links, long offset, long limit)
         {
             ThrowIfLessThan(1, offset, nameof(offset), $"Offset can't be less than 1: {offset}");
             ThrowIfLessThan(1, limit, nameof(limit), $"Limit can't be less than 1: {offset}");
@@ -56,14 +56,14 @@ namespace TryCatch.Hateoas.Models
         /// <summary>
         /// Gets or sets the limit applied on the query.
         /// </summary>
-        public int Limit { get; set; }
+        public long Limit { get; set; }
 
         /// <summary>
         /// Gets or sets the offset applied on the query.
         /// </summary>
-        public int Offset { get; set; }
+        public long Offset { get; set; }
 
-        private static void ThrowIfLessThan(int threashold, int value, string name, string message)
+        private static void ThrowIfLessThan(long threashold, long value, string name, string message)
         {
             if (value < threashold)
             {
