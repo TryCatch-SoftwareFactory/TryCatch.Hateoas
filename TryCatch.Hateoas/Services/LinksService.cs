@@ -66,8 +66,8 @@ namespace TryCatch.Hateoas.Services
 
         /// <inheritdoc/>
         public IEnumerable<Link> GetPageLinks(
-            int offset,
-            int limit,
+            long offset,
+            long limit,
             long total,
             IDictionary<string, string> defaultQueryParams = null,
             IEnumerable<LinkInfo> templates = null,
@@ -119,8 +119,8 @@ namespace TryCatch.Hateoas.Services
 
         /// <inheritdoc/>
         public IEnumerable<Link> GetNextPageLinks(
-            int offset,
-            int limit,
+            long offset,
+            long limit,
             IDictionary<string, string> defaultQueryParams = null,
             IEnumerable<LinkInfo> templates = null,
             string pageRel = "list",
@@ -159,14 +159,6 @@ namespace TryCatch.Hateoas.Services
             if (argument is null)
             {
                 throw new ArgumentNullException(name, message);
-            }
-        }
-
-        private static void ThrowIfLessThan(int threashold, int value, string name, string message)
-        {
-            if (value < threashold)
-            {
-                throw new ArgumentOutOfRangeException(name, message);
             }
         }
 

@@ -35,8 +35,8 @@ namespace TryCatch.Hateoas.Services
         /// <param name="pageAction">Name of the action to be used on page links. Default value is "GET".</param>
         /// <returns>A <see cref="IEnumerable{Link}"/> reference to the created links collection.</returns>
         IEnumerable<Link> GetPageLinks(
-            int offset,
-            int limit,
+            long offset,
+            long limit,
             long total,
             IDictionary<string, string> defaultQueryParams = null,
             IEnumerable<LinkInfo> templates = null,
@@ -55,8 +55,8 @@ namespace TryCatch.Hateoas.Services
         /// <param name="pageAction">Name of the action to be used on page links. Default value is "GET".</param>
         /// <returns>A <see cref="IEnumerable{Link}"/> reference to the created links collection.</returns>
         IEnumerable<Link> GetNextPageLinks(
-            int offset,
-            int limit,
+            long offset,
+            long limit,
             IDictionary<string, string> defaultQueryParams = null,
             IEnumerable<LinkInfo> templates = null,
             string pageRel = "list",

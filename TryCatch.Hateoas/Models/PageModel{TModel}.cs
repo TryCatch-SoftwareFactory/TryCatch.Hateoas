@@ -33,7 +33,7 @@ namespace TryCatch.Hateoas.Models
         /// <param name="limit">Limit applied on the source query.</param>
         /// <param name="matched">The number of items matched with the query applied.</param>
         /// <param name="count">The number of the total items.</param>
-        public PageModel(IEnumerable<TModel> items, IEnumerable<Link> links, int offset, int limit, long matched, long count)
+        public PageModel(IEnumerable<TModel> items, IEnumerable<Link> links, long offset, long limit, long matched, long count)
         {
             ThrowIfLessThan(1, offset, nameof(offset), $"Offset can't be less than 1: {offset}");
             ThrowIfLessThan(1, limit, nameof(limit), $"Limit can't be less than 1: {offset}");
@@ -66,7 +66,7 @@ namespace TryCatch.Hateoas.Models
         /// <summary>
         /// Gets or sets the limit applied on the query.
         /// </summary>
-        public int Limit { get; set; }
+        public long Limit { get; set; }
 
         /// <summary>
         /// Gets or sets the number of items matched with the query applied.
@@ -76,15 +76,7 @@ namespace TryCatch.Hateoas.Models
         /// <summary>
         /// Gets or sets the offset applied on the query.
         /// </summary>
-        public int Offset { get; set; }
-
-        private static void ThrowIfLessThan(int threashold, int value, string name, string message)
-        {
-            if (value < threashold)
-            {
-                throw new ArgumentOutOfRangeException(name, message);
-            }
-        }
+        public long Offset { get; set; }
 
         private static void ThrowIfLessThan(long threashold, long value, string name, string message)
         {
