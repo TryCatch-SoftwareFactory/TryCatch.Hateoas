@@ -44,24 +44,24 @@ namespace TryCatch.Hateoas.Models
         }
 
         /// <summary>
-        /// Gets the results item collection.
+        /// Gets or sets the results item collection.
         /// </summary>
-        public IEnumerable<TModel> Items { get; }
+        public IEnumerable<TModel> Items { get; set; }
 
         /// <summary>
-        /// Gets the page links collection.
+        /// Gets or sets the page links collection.
         /// </summary>
-        public IEnumerable<Link> Links { get; }
+        public IEnumerable<Link> Links { get; set; }
 
         /// <summary>
-        /// Gets the limit applied on the query.
+        /// Gets or sets the limit applied on the query.
         /// </summary>
-        public int Limit { get; }
+        public int Limit { get; set; }
 
         /// <summary>
-        /// Gets the offset applied on the query.
+        /// Gets or sets the offset applied on the query.
         /// </summary>
-        public int Offset { get; }
+        public int Offset { get; set; }
 
         private static void ThrowIfLessThan(int threashold, int value, string name, string message)
         {
