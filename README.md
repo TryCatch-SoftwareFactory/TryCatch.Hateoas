@@ -26,10 +26,10 @@ $ dotnet test
 ```
 
 ## Built With
+- [AutoFixture](https://autofixture.github.io/)
 - [Fluent Assertions](https://fluentassertions.com/)
 - [NSubstitute](https://nsubstitute.github.io/)
 - [StyleCop Analyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers)
-- [TryCatch](https://github.com/TryCatch-SoftwareFactory/TryCatch)
 - [Coverlet](https://github.com/coverlet-coverage/coverlet)
 
 ## Nuget
