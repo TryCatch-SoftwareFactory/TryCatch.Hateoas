@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EFD297EB-244
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6DCFB2E2-118C-4D07-AE31-B3F0D6E6A16E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TryCatch.Hateoas", "TryCatch.Hateoas\TryCatch.Hateoas.csproj", "{D7C99762-28A3-417F-A25B-688B24DD8ED7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TryCatch.Hateoas", "src\TryCatch.Hateoas\TryCatch.Hateoas.csproj", "{D7C99762-28A3-417F-A25B-688B24DD8ED7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TryCatch.Hateoas.UnitTests", "TryCatch.Hateoas.UnitTests\TryCatch.Hateoas.UnitTests.csproj", "{52014B75-20D9-4304-BC59-8076F314B960}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TryCatch.Hateoas.UnitTests", "tests\TryCatch.Hateoas.UnitTests\TryCatch.Hateoas.UnitTests.csproj", "{52014B75-20D9-4304-BC59-8076F314B960}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{186D1949-0516-40E6-AAAD-A9A922447045}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,9 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{3C7CBB39-D6E5-46AD-A857-8EFADB481A7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBooksApi", "MyBooksApi\MyBooksApi.csproj", "{F2C97B22-C61E-4DDB-B63C-51CF016CB188}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBooksApi", "examples\MyBooksApi\MyBooksApi.csproj", "{F2C97B22-C61E-4DDB-B63C-51CF016CB188}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TryCatch.Hateoas.FunctionalTests", "TryCatch.Hateoas.FunctionalTests\TryCatch.Hateoas.FunctionalTests.csproj", "{0FBCB927-FEAC-46E6-AF09-AC57F4353871}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TryCatch.Hateoas.FunctionalTests", "tests\TryCatch.Hateoas.FunctionalTests\TryCatch.Hateoas.FunctionalTests.csproj", "{0FBCB927-FEAC-46E6-AF09-AC57F4353871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

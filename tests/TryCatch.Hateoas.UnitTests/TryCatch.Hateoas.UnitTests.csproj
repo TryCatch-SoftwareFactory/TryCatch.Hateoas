@@ -36,11 +36,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TryCatch.Hateoas\TryCatch.Hateoas.csproj" />    
+    <ProjectReference Include="..\..\src\TryCatch.Hateoas\TryCatch.Hateoas.csproj" />    
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
 </Project>
