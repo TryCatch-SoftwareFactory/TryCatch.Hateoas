@@ -27,7 +27,7 @@ jobs:
       with:
         label: Code Coverage
         color: brightgreen
-        path: src/TryCatch.Hateoas.UnitTests/TestResults/coverage.opencover.xml
+        path: tests/TryCatch.Hateoas.UnitTests/TestResults/coverage.opencover.xml
         gist-filename: trycatch.hateoas-code-coverage.json
         gist-id: d329d88d2223613ccf3f9ec704d707b5
         gist-auth-token: ${{ secrets.GIST_CQRS_BADGE }}       
