@@ -100,6 +100,24 @@ namespace TryCatch.Hateoas.FunctionalTests
             {
                 new Dictionary<string, string>()
                 {
+                    { "Offset", "1" },
+                    { "Limit", "40" },
+                },
+                new BooksPage()
+                {
+                    Count = 10000,
+                    Offset = 1,
+                    Matched = 1000,
+                    Limit = 40,
+                    Items = items,
+                    Links = GetLinks(1, 40, "Title", "ASC", 9961),
+                },
+            };
+
+            yield return new object[]
+            {
+                new Dictionary<string, string>()
+                {
                     { "offset", "41" },
                     { "limit", "40" },
                 },

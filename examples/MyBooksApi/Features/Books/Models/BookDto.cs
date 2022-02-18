@@ -8,7 +8,7 @@ namespace MyBooksApi.Features.Books.Models
     using System.Collections.Generic;
     using TryCatch.Hateoas.Models;
 
-    public class BookDto : Book, IItemModel
+    public class BookDto : Book, IResourceModel
     {
         public BookDto()
         {

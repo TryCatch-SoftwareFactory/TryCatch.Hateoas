@@ -8,8 +8,8 @@ namespace TryCatch.Hateoas.Models
     using System;
     using System.Collections.Generic;
 
-    public class PageModel<TModel> : IItemModel
-        where TModel : IItemModel
+    public class PageModel<TModel> : IResourceModel
+        where TModel : IResourceModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PageModel{TModel}"/> class.

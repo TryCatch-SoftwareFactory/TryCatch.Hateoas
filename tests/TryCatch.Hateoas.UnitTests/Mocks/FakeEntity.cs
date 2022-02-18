@@ -8,7 +8,7 @@ namespace TryCatch.Hateoas.UnitTests.Mocks
     using System.Collections.Generic;
     using TryCatch.Hateoas.Models;
 
-    public class FakeEntity : IItemModel
+    public class FakeEntity : IResourceModel
     {
         public FakeEntity()
         {
