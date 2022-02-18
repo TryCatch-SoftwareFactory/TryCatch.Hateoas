@@ -22,13 +22,13 @@ namespace System.Collections.Generic
 
             foreach (var item in keysToMerge)
             {
-                if (newCurrent.ContainsKey(item.Key))
+                if (newCurrent.ContainsKey(item.Key.ToCamelCase()))
                 {
-                    newCurrent[item.Key] = item.Value;
+                    newCurrent[item.Key.ToCamelCase()] = item.Value;
                 }
                 else
                 {
-                    newCurrent.Add(item.Key, item.Value);
+                    newCurrent.Add(item.Key.ToCamelCase(), item.Value);
                 }
             }
 
@@ -85,12 +85,12 @@ namespace System.Collections.Generic
 
                 if (key == default)
                 {
-                    newDictionary.Add(keyValue.Key, keyValue.Value.ToString());
+                    newDictionary.Add(keyValue.Key.ToCamelCase(), keyValue.Value.ToString());
 
                     continue;
                 }
 
-                newDictionary.Add(key, keyValue.Value.ToString());
+                newDictionary.Add(key.ToCamelCase(), keyValue.Value.ToString());
             }
 
             return newDictionary;

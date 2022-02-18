@@ -12,8 +12,8 @@ namespace TryCatch.Hateoas.Models
     /// Represents the next page result model.
     /// </summary>
     /// <typeparam name="TModel">Type of model.</typeparam>
-    public class NextPageModel<TModel> : IItemModel
-        where TModel : IItemModel
+    public class NextPageModel<TModel> : IResourceModel
+        where TModel : IResourceModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NextPageModel{TModel}"/> class.

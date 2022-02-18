@@ -10,6 +10,15 @@ namespace System
 
     internal static class StringExtensions
     {
+        internal static string ToCamelCase(this string text) =>
+            text.Length > 1
+#pragma warning disable CA1308 // Normalize strings to uppercase
+                ? $"{text.Substring(0, 1).ToLowerInvariant()}{text.Substring(1)}"
+#pragma warning restore CA1308 // Normalize strings to uppercase
+#pragma warning disable CA1308 // Normalize strings to uppercase
+                : text.ToLowerInvariant();
+#pragma warning restore CA1308 // Normalize strings to uppercase
+
         internal static string CleanUri(this string baseUri)
         {
             var substrings = new Dictionary<string, string>()
